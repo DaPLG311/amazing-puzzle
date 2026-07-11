@@ -6,7 +6,7 @@
    if the browser would otherwise evict its HTTP cache.
    Bump VERSION on every deploy to roll the cache forward.
    ============================================================ */
-const VERSION = "ap-v1.0.0";
+const VERSION = "ap-v1.0.1";
 const SHELL = [
   "./", "./index.html",
   "./styles.css", "./onboarding.css", "./grownup.css", "./teach.css",
@@ -30,15 +30,27 @@ self.addEventListener("fetch", e=>{
   const url = new URL(e.request.url);
   if(e.request.method !== "GET") return;
 
-  /* app shell: cache-first (offline always works), refresh in background */
   if(url.origin === location.origin){
+    /* HTML/navigations: NETWORK-FIRST so every deploy's fixes reach the tablet
+       immediately; fall back to cache only when actually offline. */
+    if(e.request.mode === "navigate" || e.request.destination === "document"){
+      e.respondWith(
+        fetch(e.request).then(res=>{
+          if(res && res.ok) caches.open(VERSION).then(c=>c.put(e.request, res.clone()));
+          return res;
+        }).catch(()=> caches.match(e.request).then(hit=> hit || caches.match("./index.html")))
+      );
+      return;
+    }
+    /* static assets (css/js/icons): cache-first + background refresh.
+       VERSION bumps roll the whole shell forward atomically on activate. */
     e.respondWith(
       caches.match(e.request).then(hit=>{
         const refresh = fetch(e.request).then(res=>{
           if(res && res.ok) caches.open(VERSION).then(c=>c.put(e.request, res.clone()));
           return res;
         }).catch(()=>hit);
-        return hit || refresh;
+        return hit || refresh;   // uncached+offline → undefined (no same-origin runtime fetches exist)
       })
     );
     return;

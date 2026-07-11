@@ -722,10 +722,16 @@ function gzProfiles(){
         <button class="prof__link">${active ? "Edit profile →" : "Switch to "+esc(p.name||"this child")+" →"}</button>
         ${!active && all.length>1 ? `<button class="prof__link prof__link--danger" data-rm>Remove this profile</button>` : ""}
       </span>`;
-    card.querySelector(".prof__link").onclick = ()=>{
+    card.querySelector(".prof__link").onclick = async ()=>{
       buzz();
       if(active){ document.body.classList.remove("gz"); startOnboarding(true); }
-      else { profileSwitch(p.id); applyProfile(); applySettings(); gzProfiles(); }
+      else {
+        profileSwitch(p.id);
+        /* pull the switched-in child's photos + recordings out of IndexedDB
+           before rendering, or their real faces/voice would show as fallbacks */
+        if(typeof mediaHydrate==="function") await mediaHydrate(profileGet());
+        applyProfile(); applySettings(); gzProfiles();
+      }
     };
     const rm = card.querySelector("[data-rm]");
     if(rm) rm.onclick = ()=>{
