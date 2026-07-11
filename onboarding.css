@@ -1,0 +1,129 @@
+/* ============================================================
+   The Amazing Puzzle™ — Onboarding wizard (screens 3.1–3.6)
+   Faithful to the Canva design: flat calm blue wash, host circle,
+   colored quote line, big rounded title, blue Next pill, 6 dots.
+   ============================================================ */
+
+body.onboarding .train, body.onboarding .buddy { display:none; }
+body.onboarding .phone { background:#EEF3FA; }
+
+.ob{ position:absolute; inset:0; overflow-y:auto; display:flex; flex-direction:column;
+  align-items:center; text-align:center; padding:26px 26px 30px; animation:fade .35s ease; }
+/* a scrolling column must never squeeze its children (kept the host circle round) */
+.ob > *{ flex-shrink:0; }
+
+/* progress dots */
+.ob__dots{ display:flex; gap:12px; justify-content:center; margin:6px 0 10px; }
+.ob__dots i{ width:9px; height:9px; border-radius:50%; background:#D6DEE9; transition:.2s; }
+.ob__dots i.on{ background:#4A7DE2; transform:scale(1.15); }
+.ob__dots--bottom{ margin-top:auto; padding-top:22px; }
+
+/* subtle back + cancel (both ≥44px hit areas) */
+.ob__back{ position:absolute; top:16px; left:12px; font-weight:800; color:#9AA7B6; font-size:15px;
+  padding:12px 14px; min-height:44px; min-width:44px; }
+.ob__cancel{ position:absolute; top:16px; right:12px; font-weight:800; color:#9AA7B6; font-size:17px;
+  padding:12px 14px; min-height:44px; min-width:44px; }
+
+/* host + quote */
+.ob__host{ width:118px; height:118px; border-radius:50%; display:grid; place-items:center;
+  font-size:58px; margin:26px auto 20px; box-shadow:0 10px 24px rgba(43,58,74,.16), inset 0 3px 6px rgba(255,255,255,.35);
+  animation:float 4.5s ease-in-out infinite; }
+.ob__quote{ font-weight:700; font-size:16.5px; margin-bottom:26px; }
+
+.ob__title{ font-size:32px; font-weight:800; letter-spacing:-.01em; margin-bottom:8px; }
+.ob__sub{ color:var(--muted); font-weight:600; font-size:16.5px; margin-bottom:26px; }
+
+/* the big blue pill */
+.ob__next{ display:block; width:min(420px,100%); margin:26px auto 0; padding:19px 20px;
+  border-radius:999px; background:linear-gradient(180deg,#5E93E8,#4A7DE2); color:#fff;
+  font-weight:800; font-size:23px; box-shadow:0 14px 30px rgba(74,125,226,.4), inset 0 2px 3px rgba(255,255,255,.5);
+  transition:transform .12s; }
+.ob__next:hover{ transform:translateY(-2px); } .ob__next:active{ transform:scale(.97); }
+.ob__foot{ color:#66798C; font-weight:600; font-size:13.5px; margin-top:16px; }
+
+/* ---------- 3.1 welcome ---------- */
+.ob__logo{ font-size:86px; margin:40px 0 26px; filter:drop-shadow(0 10px 14px rgba(52,211,153,.35));
+  animation:float 4.5s ease-in-out infinite; }
+.ob__castrow{ display:flex; gap:26px; justify-content:center; margin:30px 0 26px; }
+.castface{ display:flex; flex-direction:column; align-items:center; gap:8px; font-weight:700;
+  color:var(--muted); font-size:14px; }
+.castface__c{ width:74px; height:74px; border-radius:50%; display:grid; place-items:center; font-size:38px;
+  box-shadow:0 8px 18px rgba(43,58,74,.15), inset 0 3px 5px rgba(255,255,255,.35); }
+
+/* ---------- 3.2 profile ---------- */
+.ob__field{ width:min(460px,100%); background:#fff; border:1px solid #E7EDF4; border-radius:16px;
+  padding:17px 18px; font-size:17px; font-weight:600; color:var(--ink); margin:0 auto 14px; display:block;
+  font-family:inherit; outline:none; text-align:left; }
+.ob__field::placeholder{ color:#A9B4C2; font-weight:600; }
+.ob__field:focus{ border-color:#9CC1F5; box-shadow:0 0 0 3px rgba(108,203,255,.25); }
+.ob__label{ color:var(--muted); font-weight:700; font-size:15px; margin:16px 0 12px; }
+.avatars{ display:flex; gap:18px; justify-content:center; flex-wrap:wrap; }
+.avatar{ width:66px; height:66px; border-radius:50%; display:grid; place-items:center; font-size:34px;
+  box-shadow:0 6px 14px rgba(43,58,74,.14); border:3px solid transparent; transition:transform .12s; }
+.avatar:active{ transform:scale(.92); }
+.avatar.on{ border-color:#4A7DE2; transform:scale(1.08); box-shadow:0 8px 18px rgba(74,125,226,.35); }
+
+/* ---------- 3.3 people ---------- */
+.people{ display:grid; grid-template-columns:1fr 1fr; gap:16px; width:min(520px,100%); }
+.person{ position:relative; background:#fff; border-radius:22px; padding:22px 12px 16px; box-shadow:0 8px 20px rgba(43,58,74,.08);
+  display:flex; flex-direction:column; align-items:center; gap:6px; }
+.person__remove{ position:absolute; top:2px; right:2px; min-width:44px; min-height:44px;
+  color:#B7C2CE; font-weight:800; font-size:15px; display:grid; place-items:center; }
+.person__face{ width:64px; height:64px; border-radius:50%; display:grid; place-items:center; font-size:44px; overflow:hidden; }
+.person__face img{ width:100%; height:100%; object-fit:cover; border-radius:50%; }
+.person__name{ font-weight:800; font-size:18px; }
+.person__name input{ border:none; border-bottom:2px dashed #D6DEE9; width:110px; text-align:center;
+  font:inherit; color:inherit; outline:none; background:transparent; }
+.person__add{ color:#4A7DE2; font-weight:700; font-size:14.5px; padding:13px 14px; min-height:44px; }
+.ob__another{ margin:20px auto 0; background:#E9EEF5; color:#8A97A6; font-weight:700; font-size:15px;
+  padding:13px 26px; border-radius:999px; }
+
+/* ---------- 3.4 favorites ---------- */
+.favgrid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; width:min(560px,100%); }
+.favtile{ position:relative; border-radius:20px; padding:22px 6px 16px; box-shadow:0 6px 16px rgba(43,58,74,.07);
+  display:flex; flex-direction:column; align-items:center; gap:8px; border:3px solid transparent; transition:transform .1s; }
+.favtile:active{ transform:scale(.94); }
+.favtile .e{ font-size:40px; filter:drop-shadow(0 3px 4px rgba(0,0,0,.12)); }
+.favtile .l{ font-weight:800; font-size:15px; }
+.favtile.on{ border-color:#4A7DE2; }
+.favtile.on::after{ content:"✓"; position:absolute; top:8px; right:10px; width:22px; height:22px;
+  border-radius:50%; background:#4A7DE2; color:#fff; font-size:13px; font-weight:800; display:grid; place-items:center; }
+
+/* ---------- 3.5 voice ---------- */
+.voices{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; width:min(560px,100%); }
+.voicecard{ border-radius:22px; padding:24px 8px 18px; display:flex; flex-direction:column; align-items:center; gap:4px;
+  border:3px solid transparent; box-shadow:0 6px 16px rgba(43,58,74,.07); transition:transform .1s; }
+.voicecard:active{ transform:scale(.95); }
+.voicecard .e{ font-size:40px; filter:drop-shadow(0 3px 4px rgba(0,0,0,.12)); }
+.voicecard .n{ font-weight:800; font-size:19px; margin-top:6px; }
+.voicecard .t{ color:var(--muted); font-weight:600; font-size:13px; }
+.voicecard.on{ border-color:#4A7DE2; }
+.ob__preview{ margin:22px auto 0; display:inline-flex; align-items:center; gap:8px; background:#fff;
+  border:2.5px solid #F2C94C; color:var(--ink); font-weight:800; font-size:17px; padding:14px 30px; border-radius:999px; }
+.ob__preview:active{ transform:scale(.96); }
+.ob__reclink{ color:#4A7DE2; font-weight:700; font-size:15.5px; margin:16px 0 8px; display:block;
+  padding:13px 16px; min-height:44px; }
+.recorder{ width:min(520px,100%); background:#fff; border-radius:22px; padding:18px;
+  box-shadow:0 8px 20px rgba(43,58,74,.08); text-align:center; }
+.recorder__hint{ color:var(--muted); font-weight:600; font-size:14.5px; margin-bottom:6px; }
+.recrow{ display:flex; align-items:center; gap:10px; padding:10px 6px; border-bottom:1px solid #F0F4F8; }
+.recrow:last-child{ border-bottom:none; }
+.recrow .w{ flex:1; text-align:left; font-weight:800; font-size:16px; }
+.recbtn{ width:44px; height:44px; border-radius:50%; display:grid; place-items:center; font-size:18px;
+  background:#F1F5F9; transition:transform .1s; }
+.recbtn:active{ transform:scale(.9); }
+.recbtn.rec{ background:#FDE2DA; animation:recpulse 1.2s ease-in-out infinite; }
+@keyframes recpulse{ 0%,100%{box-shadow:0 0 0 0 rgba(229,72,77,.35)} 50%{box-shadow:0 0 0 8px rgba(229,72,77,0)} }
+.recbtn.has{ background:#DDF7EE; }
+.recorder__note{ color:#66798C; font-weight:600; font-size:13.5px; margin-top:10px; }
+.usefam{ display:inline-flex; align-items:center; gap:10px; margin-top:14px; font-weight:700; font-size:14.5px;
+  color:var(--ink); background:#EAF6FF; border-radius:999px; padding:13px 18px; min-height:44px; }
+
+/* ---------- 3.6 ready ---------- */
+.ob__party{ font-size:78px; margin:34px 0 20px; animation:float 4s ease-in-out infinite; }
+.ob__stars i{ position:absolute; font-size:16px; opacity:.55; animation:twinkle 3.2s ease-in-out infinite; }
+@keyframes twinkle{ 0%,100%{opacity:.25; transform:scale(.9)} 50%{opacity:.7; transform:scale(1.1)} }
+
+@media (max-width:400px){
+  .ob__castrow{ gap:14px; } .castface__c{ width:62px; height:62px; font-size:32px; }
+}

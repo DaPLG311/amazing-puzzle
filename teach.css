@@ -1,0 +1,90 @@
+/* ============================================================
+   The Amazing Puzzle™ — TEACH MODE (companion word games)
+   Calm, warm, never a drill. The host models a word, invites a
+   try, and EVERY tap is honored as communication. Puzzle pieces
+   assemble as the game unfolds (the brand motif, gently).
+   Honors body[data-motion/calm/text/contrast] like everything.
+   ============================================================ */
+
+/* one companion at a time: during a game, the HOST is the companion. */
+body.teach .train, body.teach .buddy { display:none; }
+/* urgent words are NEVER gated — the game carries its own I Need button */
+.tm__need{ position:absolute; top:16px; right:14px; z-index:5; }
+
+.tm{ position:absolute; inset:0; overflow-y:auto; display:flex; flex-direction:column;
+  align-items:center; text-align:center; padding:24px 22px 34px; animation:fade .3s ease; }
+.tm > *{ flex-shrink:0; }
+
+.tm__leave{ position:absolute; top:14px; left:10px; font-weight:800; color:#5F6E7E;
+  font-size:15px; padding:12px 14px; min-height:44px; z-index:5;
+  background:#fff; border:1px solid var(--line); border-radius:999px; box-shadow:var(--shadow-card); }
+
+/* puzzle progress — one piece per round, assembling quietly */
+.tm__pieces{ display:flex; gap:10px; justify-content:center; margin:6px 0 4px; }
+.tm__pieces i{ font-size:22px; opacity:.22; filter:grayscale(1); transition:.3s; }
+.tm__pieces i.on{ opacity:1; filter:none; }
+
+/* the host, center stage */
+.tm__host{ width:108px; height:108px; border-radius:50%; display:grid; place-items:center;
+  font-size:54px; margin:10px auto 12px; box-shadow:0 10px 24px rgba(43,58,74,.16),
+  inset 0 3px 6px rgba(255,255,255,.35); animation:float 4.5s ease-in-out infinite; }
+.tm__say{ min-height:52px; max-width:340px; margin:0 auto 6px; background:#fff;
+  border:1px solid #E7EDF4; border-radius:18px 18px 18px 6px; padding:12px 18px;
+  font-weight:800; font-size:17px; box-shadow:0 6px 16px rgba(43,58,74,.07); }
+
+/* the modeled word — big, glossy, tappable (hearing it again is always OK) */
+.tm__model{ width:min(240px,70%); border-radius:28px; margin:14px auto;
+  background:linear-gradient(180deg,#fff,#F7FBFF); border:2px solid #E7EDF4;
+  box-shadow:0 12px 28px rgba(43,58,74,.12), inset 0 2px 3px rgba(255,255,255,.7);
+  display:flex; flex-direction:column; align-items:center; gap:10px; padding:26px 12px;
+  transition:transform .12s; }
+.tm__model:active{ transform:scale(.96); }
+.tm__model .e{ font-size:74px; filter:drop-shadow(0 5px 6px rgba(0,0,0,.16)); }
+.tm__model .ph{ width:96px; height:96px; border-radius:50%; overflow:hidden;
+  box-shadow:0 4px 12px rgba(43,58,74,.22), inset 0 0 0 3px #fff; }
+.tm__model .ph img{ width:100%; height:100%; object-fit:cover; }
+.tm__model .l{ font-weight:800; font-size:26px; }
+.tm__model.pulse{ animation:tmpulse 1.6s ease-in-out 2; }
+@keyframes tmpulse{ 0%,100%{ box-shadow:0 12px 28px rgba(43,58,74,.12);}
+  50%{ box-shadow:0 0 0 12px rgba(108,203,255,.18);} }
+
+/* the choices — big, spaced, every one speaks */
+.tm__choices{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; width:100%;
+  max-width:480px; margin:8px auto; }
+.tm__choices .tile{ min-height:128px; }
+@media (max-width:420px){ .tm__choices{ grid-template-columns:repeat(3,1fr); gap:10px; } }
+
+/* finish scene */
+.tm__finish{ font-size:64px; margin:18px 0 6px; animation:float 4s ease-in-out infinite; }
+.tm__big{ font-size:28px; font-weight:800; letter-spacing:-.01em; }
+.tm__sub{ color:var(--muted); font-weight:600; font-size:15.5px; margin:8px 0 20px; max-width:300px; }
+.tm__again{ display:inline-flex; align-items:center; gap:10px; color:#fff; font-weight:800;
+  font-size:19px; padding:16px 30px; border-radius:999px; min-height:52px;
+  background:linear-gradient(180deg,#6CCBFF,#4A90E2);
+  box-shadow:0 12px 26px rgba(74,144,226,.4), inset 0 2px 3px rgba(255,255,255,.5); }
+.tm__again:active{ transform:scale(.96); }
+.tm__done{ display:block; margin:14px auto 0; color:#5F6E7E; font-weight:700; font-size:15px;
+  padding:13px 18px; min-height:44px; }
+
+/* high-contrast mode covers the game's key surfaces too */
+body[data-contrast="1"] .tm__model, body[data-contrast="1"] .tm__say{
+  border:3px solid #2B3A4A; box-shadow:none; }
+body[data-contrast="1"] .tm__model .l{ font-weight:900; color:#101820; }
+body[data-contrast="1"] .tm__leave{ border:2px solid #2B3A4A; color:#101820; }
+
+/* the quiet Play pill in the buddy nook (board screens) */
+.buddy__play{ position:absolute; right:0; top:-46px; display:flex; align-items:center; gap:6px;
+  background:#fff; border:1px solid var(--line); border-radius:999px; padding:10px 16px;
+  min-height:44px; font-weight:800; font-size:13.5px; color:#4A7DE2;
+  box-shadow:var(--shadow-card); }
+.buddy__play:active{ transform:scale(.94); }
+
+/* Stars gateway card */
+.stars__play{ display:flex; align-items:center; gap:14px; background:#fff; border:1px solid #E9EEF4;
+  border-radius:20px; padding:18px; margin-top:18px; box-shadow:0 6px 16px rgba(43,58,74,.06);
+  text-align:left; max-width:340px; }
+.stars__play:active{ transform:scale(.97); }
+.stars__play .c{ width:52px; height:52px; border-radius:50%; display:grid; place-items:center;
+  font-size:28px; flex:0 0 auto; }
+.stars__play .t{ font-weight:800; font-size:16.5px; }
+.stars__play .s{ color:var(--muted); font-weight:600; font-size:13px; }
