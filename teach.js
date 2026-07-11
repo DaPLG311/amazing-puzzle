@@ -123,8 +123,9 @@ function teachPlayable(catId){
 
 /* ---------------- a round ---------------- */
 function teachFace(card, big){
-  return card.img
-    ? `<span class="ph"><img src="${esc(card.img)}" alt=""></span>`
+  const src = (typeof mediaURL==="function") ? mediaURL(card.img) : card.img;
+  return src
+    ? `<span class="ph"><img src="${esc(src)}" alt=""></span>`
     : `<span class="e">${esc(card.emoji||"⭐")}</span>`;
 }
 function teachMount(inner){

@@ -75,10 +75,12 @@ function profileSwitch(id){
   return STORE.write("ap.active", id);
 }
 function profileRemove(id){
+  const gone = profilesAll().find(p=>p.id===id);
   const all = profilesAll().filter(p=>p.id!==id);
   STORE.write("ap.profiles", all);
   STORE.remove("ap.usage."+id);
   if(profileActiveId()===id) STORE.write("ap.active", all[0] ? all[0].id : null);
+  try{ if(typeof mediaPurgeProfile==="function") mediaPurgeProfile(gone); }catch(e){}
 }
 function settingsGet(){
   const p = profileGet();

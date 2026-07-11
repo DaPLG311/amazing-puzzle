@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#ffffff" />
 <title>The Amazing Puzzle™</title>
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" type="image/png" href="icon-192.png" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="Amazing Puzzle" />
 <link rel="stylesheet" href="styles.css" />
 <link rel="stylesheet" href="onboarding.css" />
 <link rel="stylesheet" href="grownup.css" />
@@ -12,6 +18,19 @@
 </head>
 <body>
   <div class="phone">
+    <!-- 1.1 Splash: puzzle pieces assemble while the app hydrates (pure CSS,
+         visible before any JS runs; app.js dismisses it when ready) -->
+    <div class="splash" id="splash" aria-hidden="true">
+      <div class="splash__pieces">
+        <span class="splash__pc" style="--c:#EF4444; --dx:-42px; --dy:-38px">🧩</span>
+        <span class="splash__pc" style="--c:#F97316; --dx:44px;  --dy:-30px">🧩</span>
+        <span class="splash__pc" style="--c:#60A5FA; --dx:-38px; --dy:40px">🧩</span>
+        <span class="splash__pc" style="--c:#FACC15; --dx:40px;  --dy:42px">🧩</span>
+      </div>
+      <div class="splash__name">The Amazing Puzzle</div>
+      <div class="splash__tag">Giving every child a voice</div>
+    </div>
+
     <!-- Screens mount here -->
     <main class="screen" id="screen"></main>
 
@@ -45,6 +64,7 @@
   </div>
 
   <script src="store.js"></script>
+  <script src="idb.js"></script>
   <script src="data.js"></script>
   <script src="voices.js"></script>
   <script src="onboarding.js"></script>

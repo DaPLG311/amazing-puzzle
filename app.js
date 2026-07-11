@@ -55,7 +55,7 @@ function speak(text, voiceKey){
     && !document.body.classList.contains("onboarding");
   if(canFam){
     try{
-      AUDIO.src = PROFILE.recordings[key];
+      AUDIO.src = (typeof mediaURL==="function") ? mediaURL(PROFILE.recordings[key]) : PROFILE.recordings[key];
       AUDIO.play().catch(fallback);
       return;
     }catch(e){ /* fall through */ }
@@ -212,8 +212,9 @@ function tileEl(card, bg){
   const t = document.createElement("button");
   t.className = "tile";
   t.style.background = bg;
-  t.innerHTML = card.img
-    ? `<span class="ph"><img src="${esc(card.img)}" alt="${esc(card.label)}"></span><span class="l">${esc(card.label)}</span>`
+  const imgSrc = (typeof mediaURL==="function") ? mediaURL(card.img) : card.img;
+  t.innerHTML = imgSrc
+    ? `<span class="ph"><img src="${esc(imgSrc)}" alt="${esc(card.label)}"></span><span class="l">${esc(card.label)}</span>`
     : `<span class="e">${esc(card.emoji)}</span><span class="l">${esc(card.label)}</span>`;
   t.onclick = ()=> onTile(card, t);
   return t;
@@ -317,7 +318,16 @@ function renderBoard(){
     ${stripHTML()}
     <div class="grid" id="grid"></div>`;
   const grid = $("#grid");
-  cat.cards.forEach((card,i)=> grid.appendChild(tileEl(card, PASTEL[i % PASTEL.length])));
+  if(!cat.cards.length){
+    /* 4.1 empty state — a warm hand-off, never a blank wall */
+    grid.innerHTML = `<div class="stub" style="grid-column:1/-1; min-height:40vh">
+      <div class="stub__big" aria-hidden="true">🧩</div>
+      <h2>Nothing here yet!</h2>
+      <p>A grown-up can add words for you in the Grown-Up Zone.</p>
+    </div>`;
+  } else {
+    cat.cards.forEach((card,i)=> grid.appendChild(tileEl(card, PASTEL[i % PASTEL.length])));
+  }
   /* natural voice: quietly pre-warm the words the child can see right now */
   if(typeof piperPrewarm==="function") piperPrewarm(cat.cards.map(c=>c.speak||c.label));
   wireStrip();
@@ -392,8 +402,30 @@ function closeNeeds(){
 $("#needClose").onclick = closeNeeds;
 $("#needOverlay").onclick = (e)=>{ if(e.target.id==="needOverlay") closeNeeds(); };
 
-/* ---------------- boot ---------------- */
-renderTrain();
-if(typeof piperBoot==="function") piperBoot();   // wake the natural voice from local cache (no network)
-if(profileGet()){ applyProfile(); applySettings(); go("home"); }
-else { startOnboarding(); }
+/* ---------------- boot ----------------
+   The splash (pure CSS, already animating) covers hydration:
+   1. migrate any legacy inline photos/recordings → IndexedDB
+   2. hydrate the active child's media into memory
+   3. wake the natural voice from local cache (no network)
+   4. reveal the app — never earlier than the pieces snapping in */
+(async function boot(){
+  const t0 = Date.now();
+  renderTrain();
+  try{ if(typeof mediaMigrate==="function") await mediaMigrate(); }catch(e){}
+  try{ if(typeof mediaHydrate==="function") await mediaHydrate(profileGet()); }catch(e){}
+  if(typeof piperBoot==="function") piperBoot();
+  if(profileGet()){ applyProfile(); applySettings(); go("home"); }
+  else { startOnboarding(); }
+  /* dismiss the splash gently (min 1.4s so the assembly reads; instant-ish under reduced motion) */
+  const s = (typeof settingsGet==="function") ? settingsGet() : {};
+  const minShow = (s.motion || matchMedia("(prefers-reduced-motion: reduce)").matches) ? 250 : 1400;
+  const wait = Math.max(0, minShow - (Date.now()-t0));
+  setTimeout(()=>{
+    const sp = document.getElementById("splash");
+    if(sp){ sp.classList.add("done"); setTimeout(()=>sp.remove(), 600); }
+  }, wait);
+  /* the offline promise: register the service worker (https/localhost only) */
+  if("serviceWorker" in navigator && /^https?:$/.test(location.protocol)){
+    navigator.serviceWorker.register("sw.js").catch(()=>{});
+  }
+})();

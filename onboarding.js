@@ -238,7 +238,7 @@ function obPeople(){
       card.className = "person";
       card.innerHTML = `
         ${p.custom ? `<button class="person__remove" aria-label="Remove this person">✕</button>` : ""}
-        <div class="person__face">${p.img ? `<img src="${p.img}" alt="${esc(p.label)}">` : `<span aria-hidden="true">${p.emoji}</span>`}</div>
+        <div class="person__face">${mediaURL(p.img) ? `<img src="${esc(mediaURL(p.img))}" alt="${esc(p.label)}">` : `<span aria-hidden="true">${p.emoji}</span>`}</div>
         <div class="person__name">${p.custom
           ? `<input value="${esc(p.label)}" placeholder="Name" maxlength="14" aria-label="Person's name">`
           : esc(p.label)}</div>
@@ -253,7 +253,9 @@ function obPeople(){
       file.onchange = ()=>{
         obProcessPhoto(file.files[0], (dataURL, err)=>{
           if(err){ addBtn.textContent = err; return; }
-          p.img = dataURL; renderPeople();
+          if(typeof mediaStore==="function"){
+            mediaStore(dataURL, "ppl").then(tok=>{ p.img = tok; renderPeople(); });
+          } else { p.img = dataURL; renderPeople(); }
         });
       };
       const nameInput = card.querySelector(".person__name input");
@@ -401,8 +403,8 @@ function obVoice(){
         recBtn.classList.add("rec"); recBtn.textContent = "■";
         recBtn.setAttribute("aria-label", "Stop recording "+word);
         note.textContent = `Recording “${word}” — tap ■ to stop.`;
-        obRecStart(word, dataURL=>{
-          d.recordings[key] = dataURL;
+        obRecStart(word, async dataURL=>{
+          d.recordings[key] = (typeof mediaStore==="function") ? await mediaStore(dataURL, "rec") : dataURL;
           d.useFamiliar = true;
           if(document.body.contains(note)) note.textContent = `Saved “${word}”! Tap ▶ to hear it.`;
           renderRows(); refreshFam();
@@ -411,7 +413,7 @@ function obVoice(){
           renderRows();
         });
       };
-      playBtn.onclick = ()=>{ buzz(); if(d.recordings[key]) obPlayClip(d.recordings[key]); };
+      playBtn.onclick = ()=>{ buzz(); if(d.recordings[key]) obPlayClip(mediaURL(d.recordings[key])); };
       rowsEl.appendChild(row);
     });
     refreshFam();

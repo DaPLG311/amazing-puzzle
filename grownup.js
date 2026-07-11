@@ -263,7 +263,7 @@ function gzVocab(){
     row.className = "vrow";
     row.innerHTML = `
       <span class="vrow__lead" aria-hidden="true">${prot?"🔒":"⭐"}</span>
-      <span class="vrow__face">${card.img?`<img src="${esc(card.img)}" alt="">`:esc(card.emoji||"🖼️")}</span>
+      <span class="vrow__face">${mediaURL(card.img)?`<img src="${esc(mediaURL(card.img))}" alt="">`:esc(card.emoji||"🖼️")}</span>
       <span class="vrow__body">
         <span class="vrow__label">${esc(card.label)}</span>
         ${prot?`<div class="vrow__core">🔒 Core word — always available</div>`:""}
@@ -334,7 +334,8 @@ function vedSheet(card, idx, isNeed){
   document.body.appendChild(sheet);
   setTimeout(()=>{ try{ sheet.querySelector("#vsLabel").focus(); }catch(e){} }, 60);
   const prev = sheet.querySelector("#vsPrev");
-  function drawPrev(){ prev.innerHTML = d.img ? `<img src="${esc(d.img)}" alt="">` : esc(d.emoji||"⭐"); }
+  function drawPrev(){ const src = (typeof mediaURL==="function")?mediaURL(d.img):d.img;
+    prev.innerHTML = src ? `<img src="${esc(src)}" alt="">` : esc(d.emoji||"⭐"); }
   drawPrev();
   sheet.querySelector("#vsLabel").oninput = e=>{ d.label = e.target.value; };
   sheet.querySelector("#vsSpeak").oninput = e=>{ d.speak = e.target.value; };
@@ -354,10 +355,13 @@ function vedSheet(card, idx, isNeed){
   function close(){ sheet.remove(); }
   sheet.querySelector("#vsCancel").onclick = ()=>{ buzz(); close(); };
   sheet.onclick = e=>{ if(e.target===sheet) close(); };
-  sheet.querySelector("#vsSave").onclick = ()=>{
+  sheet.querySelector("#vsSave").onclick = async ()=>{
     buzz();
     const label = (d.label||"").trim();
     if(!label && !d.img){ sheet.querySelector("#vsStatus").textContent = "Give the button a word or a picture."; return; }
+    if(typeof mediaStore==="function" && typeof d.img==="string" && d.img.startsWith("data:")){
+      d.img = await mediaStore(d.img, "card");            // big pixels live in IndexedDB
+    }
     const p = profileGet();
     if(isNeed){
       p.vocab = p.vocab || {cats:{},needs:null};
@@ -628,10 +632,17 @@ function gzBackup(){
     <div class="gznote">Backups stay in your hands — only the people you give the file to can open it.</div>`);
   gzWireBack("hub");
   const status = document.getElementById("bakStatus");
-  document.getElementById("bakNow").onclick = ()=>{
+  document.getElementById("bakNow").onclick = async ()=>{
     buzz();
     try{
-      const blob = new Blob([JSON.stringify(backupBuild(), null, 1)], {type:"application/json"});
+      const bk = backupBuild();
+      /* portability: photos & recordings live in IndexedDB — re-inline them so
+         the backup is ONE file that restores anywhere */
+      if(typeof mediaInlineForBackup==="function" && bk.data["ap.profiles"]){
+        const profs = await mediaInlineForBackup(JSON.parse(bk.data["ap.profiles"]));
+        bk.data["ap.profiles"] = JSON.stringify(profs);
+      }
+      const blob = new Blob([JSON.stringify(bk, null, 1)], {type:"application/json"});
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
       a.download = "amazing-puzzle-backup-" + new Date().toISOString().slice(0,10) + ".json";
