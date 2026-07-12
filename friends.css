@@ -1,0 +1,60 @@
+/* ============================================================
+   The Amazing Puzzle™ — FRIENDS screen + living companions
+   The Hola Pollito cast, alive: gentle idle motion, a wave on
+   entrance, a warm "meet your friends" surface. Calm Mode &
+   reduced-motion still every bit of it.
+   ============================================================ */
+
+/* ---------- companion life (the corner buddy on every screen) ---------- */
+.buddy__chip{ animation:buddyBreathe 4.5s ease-in-out infinite; }
+@keyframes buddyBreathe{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-4px) } }
+.buddy__chip.wave{ animation:buddyWave 1s ease; }
+@keyframes buddyWave{
+  0%{ transform:rotate(0) } 15%{ transform:rotate(-14deg) } 30%{ transform:rotate(10deg) }
+  45%{ transform:rotate(-8deg) } 60%{ transform:rotate(6deg) } 100%{ transform:rotate(0) } }
+body[data-motion="1"] .buddy__chip,
+body[data-calm="1"] .buddy__chip{ animation:none !important; }
+@media (prefers-reduced-motion:reduce){ .buddy__chip{ animation:none !important; } }
+
+/* ---------- the Friends screen ---------- */
+.friends{ display:flex; flex-direction:column; align-items:center; padding:6px 4px 20px; }
+.friends__title{ font-size:26px; font-weight:800; letter-spacing:-.01em; margin:6px 0 14px; }
+
+/* spotlight — the friend you picked, big and greeting you */
+.friends__spot{ width:100%; max-width:420px; background:linear-gradient(180deg,#fff,#FBFDFF);
+  border:1px solid var(--line); border-radius:28px; padding:24px 20px 20px; text-align:center;
+  box-shadow:0 12px 30px rgba(43,58,74,.10); margin-bottom:18px; }
+.spot__c{ width:120px; height:120px; border-radius:50%; display:grid; place-items:center; font-size:62px;
+  margin:0 auto 14px; border:none; cursor:pointer;
+  box-shadow:0 10px 24px rgba(43,58,74,.18), inset 0 3px 6px rgba(255,255,255,.4);
+  animation:friFloat 4s ease-in-out infinite; }
+.spot__c:active{ transform:scale(.94); }
+@keyframes friFloat{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-8px) } }
+.spot__bubble{ font-weight:800; font-size:18px; max-width:320px; margin:0 auto 10px; line-height:1.35; }
+.spot__name{ font-size:22px; font-weight:800; }
+.spot__loves{ color:var(--muted); font-weight:600; font-size:14px; margin:4px 0 16px; }
+.spot__acts{ display:flex; flex-direction:column; gap:10px; }
+.spot__act{ padding:15px 18px; border-radius:16px; font-weight:800; font-size:16.5px; min-height:52px;
+  background:#EEF3FA; color:var(--ink); }
+.spot__act:active{ transform:scale(.97); }
+.spot__act--play{ background:linear-gradient(180deg,#70E1C8,#3FC7A6); color:#fff;
+  box-shadow:0 8px 20px rgba(63,199,166,.4); }
+
+/* the row of all five friends */
+.friends__row{ display:flex; gap:10px; overflow-x:auto; width:100%; max-width:460px;
+  padding:6px 4px 4px; justify-content:center; }
+.friend{ flex:0 0 auto; display:flex; flex-direction:column; align-items:center; gap:6px;
+  background:transparent; border:none; cursor:pointer; padding:6px 4px; border-radius:18px;
+  min-width:68px; transition:transform .12s; }
+.friend:active{ transform:scale(.94); }
+.friend__c{ width:58px; height:58px; border-radius:50%; display:grid; place-items:center; font-size:30px;
+  box-shadow:0 6px 14px rgba(43,58,74,.16), inset 0 2px 4px rgba(255,255,255,.4);
+  border:3px solid transparent; transition:transform .12s, border-color .12s; }
+.friend__n{ font-weight:700; font-size:13px; color:var(--muted); }
+.friend.on .friend__c{ border-color:#fff; transform:scale(1.12);
+  box-shadow:0 8px 20px rgba(43,58,74,.28), inset 0 2px 4px rgba(255,255,255,.5),
+    0 0 0 3px var(--fc, #4A90E2); }
+.friend.on .friend__n{ color:var(--ink); font-weight:800; }
+
+body[data-motion="1"] .spot__c, body[data-calm="1"] .spot__c{ animation:none !important; }
+@media (prefers-reduced-motion:reduce){ .spot__c{ animation:none !important; } }

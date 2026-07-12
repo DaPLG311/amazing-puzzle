@@ -152,6 +152,10 @@ function showBuddy(castKey, line, voice){
   buddyEl.hidden = false;
   buddyChip.textContent = c.emoji;
   buddyChip.style.background = c.soft;
+  buddyEl.dataset.who = castKey;
+  /* the companion is alive: a little wave each time a friend appears
+     (idle breathing lives in CSS; reduced-motion/calm still it) */
+  buddyChip.classList.remove("wave"); void buddyChip.offsetWidth; buddyChip.classList.add("wave");
   buddyBubble.textContent = line || "";
   buddyChip.onclick = ()=>{ buzz(); const l = line || "Hola!"; buddyBubble.textContent = l;
     speak(l.replace(/[—-].*$/,""), voice || (VOICES[castKey] ? castKey : "sunny")); };   // each friend speaks in their OWN voice
@@ -203,6 +207,7 @@ function go(screen, cat){
   }
   renderTrain();
   const map = { home:renderHome, talk:renderBoard, category:renderBoard, world:renderWorld, stars:renderStars,
+    friends:renderFriends,
     grownup:(typeof gzEnter==="function"? gzEnter : renderHome) };
   (map[screen]||renderHome)();
 }
@@ -353,6 +358,58 @@ function renderWorld(){
     map.appendChild(t);
   });
   showBuddy("ana","Where to next? Let's explore!");
+}
+
+/* ---------------- FRIENDS (the cast comes alive) ----------------
+   Meet Pollito, Ana, Benji, Coco & Freddy. Tap a friend → they wave
+   and greet you in their OWN voice, then offer their words + a game.
+   The friends ARE the companions here, so the corner buddy hides. */
+let FRIEND_SEL = "pollito";
+function renderFriends(){
+  hideBuddy();
+  screenEl.innerHTML = `
+    <div class="friends">
+      <div class="friends__title">Your Friends</div>
+      <div class="friends__spot" id="friSpot"></div>
+      <div class="friends__row" id="friRow"></div>
+    </div>`;
+  const row = $("#friRow");
+  Object.keys(CAST).forEach(key=>{
+    const c = CAST[key];
+    const b = document.createElement("button");
+    b.className = "friend"; b.dataset.key = key;
+    b.style.setProperty("--fc", c.color);
+    b.setAttribute("aria-label", "Meet "+c.name);
+    b.innerHTML = `<span class="friend__c" style="background:${c.color}">${c.emoji}</span>
+      <span class="friend__n">${esc(c.name)}</span>`;
+    b.onclick = ()=> friendSpotlight(key, true);
+    row.appendChild(b);
+  });
+  friendSpotlight(FRIEND_SEL, false);   // restore last pick, no auto-speak
+}
+function friendSpotlight(key, speakHello){
+  const c = CAST[key]; if(!c) return;
+  FRIEND_SEL = key; buzz();
+  document.querySelectorAll(".friend").forEach(f=> f.classList.toggle("on", f.dataset.key===key));
+  const hasCat = !!CATEGORIES[c.home];
+  const canPlay = hasCat && typeof teachPlayable==="function" && teachPlayable(c.home)
+    && ((typeof settingsGet==="function"?settingsGet().games:true) !== false);
+  const spot = $("#friSpot");
+  spot.innerHTML = `
+    <button class="spot__c" id="friHear" style="background:${c.color}" aria-label="Hear ${esc(c.name)} again">${c.emoji}</button>
+    <div class="spot__bubble" style="color:${c.color}">&ldquo;${esc(c.hello)}&rdquo;</div>
+    <div class="spot__name">${esc(c.name)}</div>
+    <div class="spot__loves">Loves ${esc(c.loves)}</div>
+    <div class="spot__acts">
+      <button class="spot__act" id="friWords">${hasCat ? "🗣️ "+esc(c.name)+"'s words" : "🧩 Pick a world"}</button>
+      ${canPlay ? `<button class="spot__act spot__act--play" id="friPlay">🎲 Play with ${esc(c.name)}</button>` : ""}
+    </div>`;
+  const say = ()=>{ if(calmOK()) speak(c.hello, key); };   // in their OWN voice
+  if(speakHello) say();
+  $("#friHear").onclick = ()=>{ buzz(); speak(c.hello, key); };
+  $("#friWords").onclick = ()=>{ buzz(); hasCat ? go("category", c.home) : go("world"); };
+  const pl = $("#friPlay");
+  if(pl) pl.onclick = ()=>{ buzz(); startTeach(c.home, "friends"); };
 }
 
 /* ---------------- STARS (gentle, descriptive — never a score) ---------------- */

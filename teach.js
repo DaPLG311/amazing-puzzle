@@ -110,6 +110,7 @@ function endTeach(){
   document.body.classList.remove("teach");
   /* return to the exact place the child left — sameness is safety */
   if(TEACH.from === "stars") go("stars");
+  else if(TEACH.from === "friends") go("friends");
   else if(TEACH.from === "category") go("category", TEACH.cat);
   else go("talk", TEACH.cat!=="favorites" ? TEACH.cat : undefined);
 }
