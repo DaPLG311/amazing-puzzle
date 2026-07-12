@@ -253,10 +253,12 @@ function onTile(card, el){
   try{ usageLog(card.label, state.cat); }catch(e){}   // descriptive only — never a score
   addToSentence(card, el);
 }
-/* the tapped word visibly FLIES up into the sentence strip (cause→effect) */
-function flyWord(card, fromEl, done){
+/* the tapped word visibly FLIES up into the sentence strip (cause→effect).
+   PURELY COSMETIC — the word is already in the sentence (added synchronously),
+   so Speak can never miss it and no ghost words accrue across navigation. */
+function flyWord(card, fromEl){
   const strip = $("#stripCards");
-  if(reducedMotion() || !fromEl || !strip){ done(); return; }
+  if(reducedMotion() || !fromEl || !strip) return;
   const from = fromEl.getBoundingClientRect();
   const to = strip.getBoundingClientRect();
   const clone = document.createElement("div");
@@ -271,9 +273,9 @@ function flyWord(card, fromEl, done){
   clone.style.transform = `translate(${dx}px, ${dy}px) scale(.42)`;
   clone.style.opacity = ".25";
   let fired = false;
-  const land = ()=>{ if(fired) return; fired = true; try{ clone.remove(); }catch(e){} done(); };
-  clone.addEventListener("transitionend", land, {once:true});
-  setTimeout(land, 620);                       // fallback if transitionend is missed
+  const gone = ()=>{ if(fired) return; fired = true; try{ clone.remove(); }catch(e){} };
+  clone.addEventListener("transitionend", gone, {once:true});
+  setTimeout(gone, 620);                       // fallback if transitionend is missed
 }
 
 /* ---------------- Sentence strip ---------------- */
@@ -329,12 +331,12 @@ function addToSentence(card, fromEl){
     momentaryTimer = setTimeout(()=>{ state.sentence = []; renderStrip(); momentaryTimer = null; }, 1600);
     return;
   }
-  /* the word flies from the tile up into the strip, THEN lands as a car */
-  flyWord(card, fromEl, ()=>{
-    state.sentence.push(card); renderStrip();
-    if(state.sentence.length===1) buddyBubble.textContent = "One more word!";
-    else if(state.sentence.length>=2) buddyBubble.textContent = "Press 🔊 to say it!";
-  });
+  /* state updates NOW — Speak always reflects what the child built; the fly is
+     decorative only (the chip is already there when the clone lands on it) */
+  state.sentence.push(card); renderStrip();
+  if(state.sentence.length===1) buddyBubble.textContent = "One more word!";
+  else if(state.sentence.length>=2) buddyBubble.textContent = "Press 🔊 to say it!";
+  flyWord(card, fromEl);
 }
 function encourage(){ showBuddy("pollito","You did it! 🎉"); }
 

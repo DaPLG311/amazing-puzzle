@@ -22,6 +22,10 @@ function soundCtx(){
 /* a warm, soft two-tone train horn — low volume, gentle attack & release */
 function playHorn(){
   if(!soundsOn()) return;
+  /* throttle: a mashing child must never stack overlapping horns into a loud honk */
+  const t = Date.now();
+  if(SOUND.lastHorn && (t - SOUND.lastHorn) < 800) return;
+  SOUND.lastHorn = t;
   const ctx = soundCtx(); if(!ctx) return;
   try{ if(ctx.state === "suspended") ctx.resume(); }catch(e){}
   const now = ctx.currentTime;
