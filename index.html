@@ -6,8 +6,10 @@
 <meta name="theme-color" content="#ffffff" />
 <title>The Amazing Puzzle™</title>
 <link rel="manifest" href="manifest.json" />
-<link rel="icon" type="image/png" href="icon-192.png" />
-<link rel="apple-touch-icon" href="icon-192.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+<link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="Amazing Puzzle" />
@@ -21,12 +23,13 @@
 </head>
 <body>
   <div class="phone">
-    <!-- 1.1 Splash: the real brand logo gently fades in while the app hydrates
-         (visible before any JS runs; app.js dismisses it when ready). The logo
-         already carries the wordmark + tagline. -->
+    <!-- 1.1 Splash: a playful, staged brand intro — the puzzle-heart pops in and
+         gently beats, then the wordmark rises and the mission fades up. Calm by
+         default (Reduce Motion / Calm Mode show the final frame instantly). -->
     <div class="splash" id="splash" aria-hidden="true">
-      <img class="splash__logo" src="logo.png" width="705" height="705"
-           alt="The Amazing Puzzle — Giving Every Child A Voice" />
+      <img class="splash__heart" src="heart-mark.png" width="290" height="244" alt="" />
+      <img class="splash__word" src="wordmark.png" width="575" height="232" alt="The Amazing Puzzle" />
+      <img class="splash__mission" src="mission.png" width="577" height="43" alt="Giving Every Child A Voice" />
     </div>
 
     <!-- Screens mount here -->

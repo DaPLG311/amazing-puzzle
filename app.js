@@ -650,9 +650,10 @@ buddyInitDrag();   // the companion is slidable from the very first screen
   if(typeof piperBoot==="function") piperBoot();
   if(profileGet()){ applyProfile(); applySettings(); go("home"); }
   else { startOnboarding(); }
-  /* dismiss the splash gently (min 1.4s so the assembly reads; instant-ish under reduced motion) */
+  /* dismiss the splash gently (min ~2s so the playful intro plays; instant-ish
+     under Reduce Motion / Calm Mode) */
   const s = (typeof settingsGet==="function") ? settingsGet() : {};
-  const minShow = (s.motion || matchMedia("(prefers-reduced-motion: reduce)").matches) ? 250 : 1400;
+  const minShow = (s.motion || s.calm || matchMedia("(prefers-reduced-motion: reduce)").matches) ? 260 : 2000;
   const wait = Math.max(0, minShow - (Date.now()-t0));
   setTimeout(()=>{
     const sp = document.getElementById("splash");
