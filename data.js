@@ -75,7 +75,7 @@ const FAVORITES = [
    core:true = protected (never moved/removed; picture/wording editable). ---- */
 const CATEGORIES = {
   favorites: {
-    label:"Favorites", emoji:"⭐", host:"pollito",
+    label:"Favorites", emoji:"⭐", host:"pollito", mood:"#FFF3E0",
     cards:[
       {emoji:"🍕",label:"Pizza"}, {emoji:"🥤",label:"Drink",speak:"drink"}, {emoji:"🍎",label:"Apple"},
       {emoji:"😊",label:"Happy"}, {emoji:"🤗",label:"Hug"}, {emoji:"🐶",label:"Dog"},
@@ -86,7 +86,7 @@ const CATEGORIES = {
 
   /* THE core-word powerhouse — small, high-frequency, always leads the board */
   core: {
-    label:"Core Words", emoji:"💬", host:"pollito",
+    label:"Core Words", emoji:"💬", host:"pollito", mood:"#EAF3FE",
     cards:[
       {emoji:"🙋",label:"I",speak:"I"}, {emoji:"👉",label:"you",speak:"you"},
       {emoji:"🙌",label:"want",speak:"want",core:true}, {emoji:"➕",label:"more",speak:"more",core:true},
@@ -102,7 +102,7 @@ const CATEGORIES = {
   },
 
   people: {
-    label:"People", emoji:"👨‍👩‍👧", host:"pollito",
+    label:"People", emoji:"👨‍👩‍👧", host:"pollito", mood:"#FDECEC",
     /* real family photos from onboarding land on these cards (img face) */
     cards:[
       {emoji:"👩",label:"Mom"}, {emoji:"👨",label:"Dad"}, {emoji:"🙋",label:"Me"},
@@ -113,7 +113,7 @@ const CATEGORIES = {
   },
 
   actions: {
-    label:"Actions", emoji:"🏃", host:"ana",
+    label:"Actions", emoji:"🏃", host:"ana", mood:"#FFEEDC",
     cards:[
       {emoji:"🚶",label:"go",speak:"go",core:true}, {emoji:"🛑",label:"stop",speak:"stop",core:true},
       {emoji:"🍽️",label:"eat",speak:"eat",core:true}, {emoji:"🥤",label:"drink",speak:"drink",core:true},
@@ -128,7 +128,7 @@ const CATEGORIES = {
   },
 
   food: {
-    label:"Food", emoji:"🍔", host:"pollito",
+    label:"Food", emoji:"🍔", host:"pollito", mood:"#FFF1E0",
     cards:[
       {emoji:"🍽️",label:"eat",speak:"eat",core:true}, {emoji:"🍕",label:"Pizza"}, {emoji:"🍎",label:"Apple"},
       {emoji:"🍌",label:"Banana"}, {emoji:"🍪",label:"Cookie"}, {emoji:"🍞",label:"Bread"},
@@ -141,7 +141,7 @@ const CATEGORIES = {
   },
 
   drinks: {
-    label:"Drinks", emoji:"🥤", host:"pollito",
+    label:"Drinks", emoji:"🥤", host:"pollito", mood:"#E7F2FB",
     cards:[
       {emoji:"🥤",label:"drink",speak:"drink",core:true}, {emoji:"💧",label:"Water"}, {emoji:"🥛",label:"Milk"},
       {emoji:"🧃",label:"Juice"}, {emoji:"🍫",label:"Hot chocolate",speak:"hot chocolate"}, {emoji:"🫖",label:"Tea"},
@@ -150,7 +150,7 @@ const CATEGORIES = {
   },
 
   feelings: {
-    label:"Feelings", emoji:"💙", host:"coco",
+    label:"Feelings", emoji:"💙", host:"coco", mood:"#F3ECFF",
     cards:[
       {emoji:"😊",label:"Happy"}, {emoji:"😢",label:"Sad"}, {emoji:"😠",label:"Angry"},
       {emoji:"😨",label:"Scared"}, {emoji:"❤️",label:"Love"}, {emoji:"😴",label:"Tired"},
@@ -162,7 +162,7 @@ const CATEGORIES = {
   },
 
   body: {
-    label:"Body", emoji:"🖐️", host:"benji",
+    label:"Body", emoji:"🖐️", host:"benji", mood:"#E5F0FE",
     cards:[
       {emoji:"🤕",label:"hurt",speak:"it hurts"}, {emoji:"😋",label:"hungry",speak:"I'm hungry"},
       {emoji:"😛",label:"thirsty",speak:"I'm thirsty"}, {emoji:"🥵",label:"hot"}, {emoji:"🥶",label:"cold"},
@@ -175,7 +175,7 @@ const CATEGORIES = {
   },
 
   animals: {
-    label:"Animals", emoji:"🐶", host:"ana",
+    label:"Animals", emoji:"🐶", host:"ana", mood:"#E6F6EE",
     cards:[
       {emoji:"🐶",label:"Dog"}, {emoji:"🐱",label:"Cat"}, {emoji:"🐰",label:"Rabbit"},
       {emoji:"🐠",label:"Fish"}, {emoji:"🐦",label:"Bird"}, {emoji:"🐴",label:"Horse"},
@@ -188,7 +188,7 @@ const CATEGORIES = {
   },
 
   places: {
-    label:"Places", emoji:"🏠", host:"ana",
+    label:"Places", emoji:"🏠", host:"ana", mood:"#EAF6FF",
     cards:[
       {emoji:"🏠",label:"Home"}, {emoji:"🏫",label:"School"}, {emoji:"🛝",label:"Park"},
       {emoji:"🏪",label:"Store"}, {emoji:"🚗",label:"Car"}, {emoji:"🌳",label:"Outside",speak:"outside"},
@@ -200,7 +200,7 @@ const CATEGORIES = {
   },
 
   play: {
-    label:"Play", emoji:"🧩", host:"coco",
+    label:"Play", emoji:"🧩", host:"coco", mood:"#FEF6D6",
     cards:[
       {emoji:"🧩",label:"Puzzle"}, {emoji:"⚽",label:"Ball"}, {emoji:"🧸",label:"Teddy"},
       {emoji:"🎨",label:"Paint"}, {emoji:"🚂",label:"Train"}, {emoji:"🫧",label:"Bubbles"},
@@ -212,7 +212,7 @@ const CATEGORIES = {
   },
 
   colors: {
-    label:"Colors", emoji:"🌈", host:"coco",
+    label:"Colors", emoji:"🌈", host:"coco", mood:"#FBEAF4",
     cards:[
       {emoji:"🔴",label:"Red"}, {emoji:"🟠",label:"Orange"}, {emoji:"🟡",label:"Yellow"},
       {emoji:"🟢",label:"Green"}, {emoji:"🔵",label:"Blue"}, {emoji:"🟣",label:"Purple"},
@@ -222,7 +222,7 @@ const CATEGORIES = {
   },
 
   numbers: {
-    label:"Numbers", emoji:"🔢", host:"benji",
+    label:"Numbers", emoji:"🔢", host:"benji", mood:"#E9F0FB",
     cards:[
       {emoji:"1️⃣",label:"One",speak:"one"}, {emoji:"2️⃣",label:"Two",speak:"two"}, {emoji:"3️⃣",label:"Three",speak:"three"},
       {emoji:"4️⃣",label:"Four",speak:"four"}, {emoji:"5️⃣",label:"Five",speak:"five"}, {emoji:"6️⃣",label:"Six",speak:"six"},
@@ -232,7 +232,7 @@ const CATEGORIES = {
   },
 
   clothes: {
-    label:"Clothes", emoji:"👕", host:"benji",
+    label:"Clothes", emoji:"👕", host:"benji", mood:"#EFEAFB",
     cards:[
       {emoji:"👕",label:"Shirt"}, {emoji:"👖",label:"Pants"}, {emoji:"👟",label:"Shoes"},
       {emoji:"🧦",label:"Socks"}, {emoji:"🧢",label:"Hat"}, {emoji:"🧥",label:"Coat"},
@@ -242,7 +242,7 @@ const CATEGORIES = {
   },
 
   weather: {
-    label:"Weather", emoji:"🌦️", host:"ana",
+    label:"Weather", emoji:"🌦️", host:"ana", mood:"#E7F4FB",
     cards:[
       {emoji:"☀️",label:"Sunny"}, {emoji:"🌧️",label:"Rainy"}, {emoji:"☁️",label:"Cloudy"},
       {emoji:"❄️",label:"Snowy"}, {emoji:"🌬️",label:"Windy"}, {emoji:"🥵",label:"Hot"},
@@ -252,7 +252,7 @@ const CATEGORIES = {
   },
 
   describing: {
-    label:"Describing", emoji:"🔤", host:"benji",
+    label:"Describing", emoji:"🔤", host:"benji", mood:"#EEF2F6",
     cards:[
       {emoji:"➕",label:"more",speak:"more",core:true}, {emoji:"👋",label:"all done",speak:"all done",core:true},
       {emoji:"🐘",label:"big"}, {emoji:"🐭",label:"little"}, {emoji:"🥵",label:"hot"}, {emoji:"🥶",label:"cold"},

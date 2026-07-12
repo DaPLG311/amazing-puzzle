@@ -1,0 +1,117 @@
+/* ============================================================
+   The Amazing Puzzle™ — KID-MAGIC PASS
+   Living tiles · the Sentence Train · 3D-gloss · world moods ·
+   a train that moves + toots. All sensory-safe: Calm Mode and
+   Reduce Motion still every bit of motion below.
+   ============================================================ */
+
+/* ===== 1. 3D-GLOSS TILES (physical, tappable toy buttons) ===== */
+.tile{
+  border-radius:26px;
+  box-shadow:0 7px 0 rgba(43,58,74,.07), 0 12px 22px rgba(43,58,74,.12),
+             inset 0 2px 3px rgba(255,255,255,.95);
+  overflow:visible;
+}
+.tile::before{                      /* top gloss highlight */
+  content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+  background:linear-gradient(180deg, rgba(255,255,255,.6), rgba(255,255,255,0) 52%);
+}
+.tile .e{ font-size:56px; filter:drop-shadow(0 4px 3px rgba(0,0,0,.18)); }
+.tile .l{ font-weight:800; }
+/* press physics: the button pushes DOWN into the page */
+.tile:active{
+  transform:translateY(5px) scale(.98);
+  box-shadow:0 2px 0 rgba(43,58,74,.07), 0 5px 10px rgba(43,58,74,.12),
+             inset 0 2px 3px rgba(255,255,255,.95);
+}
+/* speak = a happy pop + a glow ring blooming out */
+.tile.speaking{ animation:kmPop .5s cubic-bezier(.2,1.5,.3,1), kmGlow .55s ease; }
+@keyframes kmPop{ 0%{transform:scale(1)} 38%{transform:scale(1.09)} 100%{transform:scale(1)} }
+@keyframes kmGlow{
+  0%{ box-shadow:0 7px 0 rgba(43,58,74,.07), 0 12px 22px rgba(43,58,74,.12), 0 0 0 0 rgba(108,203,255,.55) }
+  100%{ box-shadow:0 7px 0 rgba(43,58,74,.07), 0 12px 22px rgba(43,58,74,.12), 0 0 0 18px rgba(108,203,255,0) }
+}
+
+/* home favorites + friend circles get the same gloss lift */
+.fav{ box-shadow:0 5px 0 rgba(43,58,74,.06), 0 8px 16px rgba(43,58,74,.10), inset 0 2px 2px rgba(255,255,255,.9); }
+.fav:active{ transform:translateY(3px) scale(.97); }
+
+/* ===== 2. THE SENTENCE TRAIN (chips = coupled cars that read) ===== */
+.strip__cards{ align-items:flex-end; padding-bottom:10px; }
+.pill{
+  position:relative; border-radius:15px 15px 9px 9px;
+  box-shadow:0 4px 0 rgba(43,58,74,.06), 0 6px 12px rgba(43,58,74,.10), inset 0 2px 2px rgba(255,255,255,.9);
+}
+.pill .e{ filter:drop-shadow(0 2px 2px rgba(0,0,0,.14)); }
+/* two little wheels under each car */
+.pill::after{
+  content:""; position:absolute; left:9px; right:9px; bottom:-7px; height:9px; pointer-events:none;
+  background:
+    radial-gradient(circle at 5px 4px, #98a9bb 3.5px, transparent 4px),
+    radial-gradient(circle at calc(100% - 5px) 4px, #98a9bb 3.5px, transparent 4px);
+}
+/* couplers bridge the gap between cars */
+.pill + .pill::before{
+  content:""; position:absolute; left:-9px; top:58%; width:9px; height:4px; border-radius:2px;
+  background:#c2cede; transform:translateY(-50%);
+}
+/* the car being read lights up + lifts */
+.pill.reading{
+  background:linear-gradient(180deg,#FFF6D8,#FFE9A8) !important;
+  box-shadow:0 4px 0 rgba(43,58,74,.06), 0 0 0 3px rgba(242,201,76,.85), 0 6px 14px rgba(242,201,76,.4);
+  transform:translateY(-5px);
+  animation:kmCar .4s ease;
+}
+@keyframes kmCar{ 0%{transform:translateY(0) scale(1)} 45%{transform:translateY(-7px) scale(1.06)} 100%{transform:translateY(-5px) scale(1)} }
+
+/* ===== 3. FLYING WORD (the tapped word travels up into the strip) ===== */
+.flyword{
+  position:fixed; z-index:200; display:grid; place-items:center; pointer-events:none;
+  transition:transform .52s cubic-bezier(.35,0,.2,1), opacity .52s ease;
+}
+.flyword .e{ font-size:52px; filter:drop-shadow(0 5px 5px rgba(0,0,0,.2)); }
+
+/* ===== 4. WORLD MOODS (each world feels like a place) ===== */
+/* board background is set inline from category.mood; keep text safe in contrast mode */
+body[data-contrast="1"] #screen{ background:#fff !important; }
+.head__title{ text-shadow:0 1px 0 rgba(255,255,255,.6); }
+
+/* ===== 5. A TRAIN THAT MOVES — ON USE, CALM AT REST =====
+   Sensory-safe: no perpetual peripheral motion. The train rests still;
+   it visibly moves (rolls, chugs, wheels spin, track scrolls, puffs)
+   only while the child is using it (tapping a car or the horn).
+   NOTE: .train is already position:absolute (bottom nav) — don't re-position it. */
+.train__cars, .loco{ animation:none; }        /* override the old perpetual chug — still at rest */
+.loco__smoke i{ animation:none; }             /* no idle smoke */
+/* the still track sits quietly under the cars */
+.train::before{
+  content:""; position:absolute; left:8px; right:8px; bottom:5px; height:4px; pointer-events:none; opacity:.45;
+  background:repeating-linear-gradient(90deg,#c2cede 0 10px, transparent 10px 22px);
+}
+.car__wheels i{ position:relative; }
+.car__wheels i::before{
+  content:""; position:absolute; inset:2px; border-radius:50%;
+  background:conic-gradient(from 0deg,#7d8ea0 0 25%, #cdd8e3 25% 50%, #7d8ea0 50% 75%, #cdd8e3 75%);
+}
+@keyframes kmTrack{ from{ background-position:0 0 } to{ background-position:-22px 0 } }
+@keyframes kmSpin{ to{ transform:rotate(360deg) } }
+@keyframes kmRoll{ 0%{transform:translateX(0)} 30%{transform:translateX(6px)} 100%{transform:translateX(0)} }
+/* --- the whole thing springs to life ONLY while .rolling --- */
+.train.rolling::before{ animation:kmTrack .55s linear 1; }
+.train.rolling .car__wheels i::before{ animation:kmSpin .55s linear 1; }
+.train.rolling .loco, .train.rolling .train__cars{ animation:kmRoll .5s ease 1, chug .5s ease-in-out 1; }
+.train.rolling .loco__smoke i{ animation:smoke 1.6s linear 1; }
+
+/* ===== SENSORY-SAFE KILL SWITCHES (Calm + Reduce Motion) ===== */
+@media (prefers-reduced-motion:reduce){
+  .tile.speaking, .pill.reading, .flyword,
+  .train.rolling::before, .train.rolling .car__wheels i::before,
+  .train.rolling .loco, .train.rolling .train__cars, .train.rolling .loco__smoke i{ animation:none !important; }
+  .flyword{ display:none !important; }
+  .pill.reading{ transform:none; }
+}
+body[data-motion="1"] .tile.speaking, body[data-motion="1"] .pill.reading,
+body[data-motion="1"] .train.rolling::before, body[data-motion="1"] .train.rolling .car__wheels i::before,
+body[data-motion="1"] .train.rolling .loco, body[data-motion="1"] .train.rolling .train__cars,
+body[data-motion="1"] .train.rolling .loco__smoke i{ animation:none !important; }
+body[data-motion="1"] .pill.reading{ transform:none; }        /* keep the glow, drop the lift */

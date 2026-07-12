@@ -186,12 +186,24 @@ function renderTrain(){
     car.onclick = ()=>{
       buzz();
       car.classList.remove("bounce"); void car.offsetWidth; car.classList.add("bounce");
+      trainRoll();
       go(stop.id);
     };
     wrap.appendChild(car);
   });
 }
-$("#loco").onclick = ()=>{ buzz(); showBuddy("freddy","All aboard! 🚂"); speak("All aboard!","freddy"); };
+function trainRoll(){                 /* the train springs to life while you use it, then rests */
+  const t = $("#train"); if(!t) return;
+  t.classList.remove("rolling"); void t.offsetWidth; t.classList.add("rolling");
+  setTimeout(()=> t.classList.remove("rolling"), 700);
+}
+$("#loco").onclick = ()=>{
+  buzz();
+  if(typeof playHorn==="function") playHorn();   // soft toot (opt-in, calm silences)
+  trainRoll();
+  showBuddy("freddy","All aboard! 🚂");
+  speak("All aboard!","freddy");
+};
 
 /* ---------------- Router ---------------- */
 function go(screen, cat){
@@ -200,6 +212,9 @@ function go(screen, cat){
   /* leaving a teach game mid-round must never strand a timer or the class */
   document.body.classList.remove("teach");
   if(typeof TEACH!=="undefined" && TEACH._timer){ clearTimeout(TEACH._timer); TEACH._timer = null; }
+  if(typeof TRAIN_READ_T!=="undefined" && TRAIN_READ_T){ clearTimeout(TRAIN_READ_T); TRAIN_READ_T = null; }
+  document.querySelectorAll(".flyword").forEach(f=>f.remove());   /* no flying word stranded across screens */
+  screenEl.style.background = "";       /* clear any world mood; renderBoard sets its own */
   if(screen!=="grownup"){
     /* landing anywhere in the child's world closes the grown-up door */
     document.body.classList.remove("gz");
@@ -224,6 +239,11 @@ function tileEl(card, bg){
   t.onclick = ()=> onTile(card, t);
   return t;
 }
+function reducedMotion(){
+  const s = (typeof settingsGet==="function") ? settingsGet() : {};
+  if(s.motion) return true;
+  try{ return matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){ return false; }
+}
 function onTile(card, el){
   buzz();
   el.classList.remove("speaking"); void el.offsetWidth; el.classList.add("speaking");
@@ -231,7 +251,29 @@ function onTile(card, el){
   const s = (typeof settingsGet==="function") ? settingsGet() : {};
   if(s.speakOnTap!==false) speak(word);     // teachable: one tap = hear the word
   try{ usageLog(card.label, state.cat); }catch(e){}   // descriptive only — never a score
-  addToSentence(card);
+  addToSentence(card, el);
+}
+/* the tapped word visibly FLIES up into the sentence strip (cause→effect) */
+function flyWord(card, fromEl, done){
+  const strip = $("#stripCards");
+  if(reducedMotion() || !fromEl || !strip){ done(); return; }
+  const from = fromEl.getBoundingClientRect();
+  const to = strip.getBoundingClientRect();
+  const clone = document.createElement("div");
+  clone.className = "flyword";
+  clone.innerHTML = `<span class="e">${esc(card.emoji || "🗣")}</span>`;
+  clone.style.left = from.left + "px"; clone.style.top = from.top + "px";
+  clone.style.width = from.width + "px"; clone.style.height = from.height + "px";
+  document.body.appendChild(clone);
+  void clone.offsetWidth;
+  const dx = (to.right - 44) - from.left;
+  const dy = (to.top + to.height/2 - 14) - from.top;
+  clone.style.transform = `translate(${dx}px, ${dy}px) scale(.42)`;
+  clone.style.opacity = ".25";
+  let fired = false;
+  const land = ()=>{ if(fired) return; fired = true; try{ clone.remove(); }catch(e){} done(); };
+  clone.addEventListener("transitionend", land, {once:true});
+  setTimeout(land, 620);                       // fallback if transitionend is missed
 }
 
 /* ---------------- Sentence strip ---------------- */
@@ -244,11 +286,28 @@ function stripHTML(){
 }
 function wireStrip(){
   renderStrip();
-  $("#sSpeak").onclick = ()=>{ if(!state.sentence.length) return; buzz();
-    speak(state.sentence.map(c=>c.speak||c.label).join(" "));
-    encourage();
-  };
+  $("#sSpeak").onclick = ()=>{ if(!state.sentence.length) return; buzz(); speakSentenceTrain(); };
   $("#sDel").onclick = ()=>{ buzz(); state.sentence.pop(); renderStrip(); };
+}
+/* the Sentence Train reads left→right: each car lights up as it's spoken
+   (karaoke). Engine-agnostic — timed per word so it works with Web Speech,
+   Piper, or a parent's recording. */
+let TRAIN_READ_T = null;
+function speakSentenceTrain(){
+  clearTimeout(TRAIN_READ_T);
+  const words = state.sentence.map(c=>c.speak||c.label);
+  let i = 0;
+  const step = ()=>{
+    const pills = [...document.querySelectorAll("#stripCards .pill")];
+    pills.forEach(p=>p.classList.remove("reading"));
+    if(i >= words.length){ encourage(); return; }
+    if(pills[i]){ pills[i].classList.remove("reading"); void pills[i].offsetWidth; pills[i].classList.add("reading"); }
+    speak(words[i]);
+    const w = words[i]; const dur = Math.min(1500, Math.max(560, 400 + w.length*58));
+    i++;
+    TRAIN_READ_T = setTimeout(step, dur);
+  };
+  step();
 }
 function renderStrip(){
   const el = $("#stripCards"); if(!el) return; el.innerHTML="";
@@ -261,7 +320,7 @@ function renderStrip(){
   el.scrollLeft = el.scrollWidth;
 }
 let momentaryTimer = null;
-function addToSentence(card){
+function addToSentence(card, fromEl){
   const s = (typeof settingsGet==="function") ? settingsGet() : {};
   if(s.mode==="single"){
     /* Single-word mode: the strip is a momentary echo, then clears itself. */
@@ -270,9 +329,12 @@ function addToSentence(card){
     momentaryTimer = setTimeout(()=>{ state.sentence = []; renderStrip(); momentaryTimer = null; }, 1600);
     return;
   }
-  state.sentence.push(card); renderStrip();
-  if(state.sentence.length===1) buddyBubble.textContent = "One more word!";
-  else if(state.sentence.length>=2) buddyBubble.textContent = "Press 🔊 to say it!";
+  /* the word flies from the tile up into the strip, THEN lands as a car */
+  flyWord(card, fromEl, ()=>{
+    state.sentence.push(card); renderStrip();
+    if(state.sentence.length===1) buddyBubble.textContent = "One more word!";
+    else if(state.sentence.length>=2) buddyBubble.textContent = "Press 🔊 to say it!";
+  });
 }
 function encourage(){ showBuddy("pollito","You did it! 🎉"); }
 
@@ -313,6 +375,9 @@ function renderHome(){
 function renderBoard(){
   const cat = CATEGORIES[state.cat] || CATEGORIES.favorites;
   const isSub = state.screen==="category";
+  /* world mood: a gentle wash so each world feels like a place you went to */
+  const mood = cat.mood || "#F4F8FC";
+  screenEl.style.background = `linear-gradient(180deg, ${mood} 0%, #ffffff 58%)`;
   screenEl.innerHTML = `
     <div class="head">
       ${isSub? `<button class="head__back" id="back">‹ Back</button>`:""}

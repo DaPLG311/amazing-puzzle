@@ -437,6 +437,7 @@ function gzSettings(){
       <div class="gzrow"><span class="k">Vibration on tap</span>${sw("vibration","Vibration on tap",s.vibration)}</div>
       <div class="gzrow"><span class="k">Calm Mode</span>${sw("calm","Calm Mode",s.calm)}</div>
       <div class="gzrow"><span class="k">Word games with friends</span>${sw("games","Word games with friends",s.games)}</div>
+      <div class="gzrow"><span class="k">Fun sounds (train horn)</span>${sw("sounds","Fun sounds",s.sounds)}</div>
     </div>
     <div class="gzsection">🔐 Caregiver Access</div>
     <div class="gzcard">
