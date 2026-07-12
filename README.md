@@ -119,7 +119,45 @@ Three engines, one rule: **a tile is never silent.**
   the production app bundles them. The **model** itself is cached on-device. Words never leave
   the device — synthesis is 100% local.
 
-## What's next (Milestone 6+)
-- IndexedDB for photo+audio storage (bigger libraries than localStorage allows)
+## ✅ Milestone 6 — V1 FINISH LINE — SHIPPED & LIVE
+**https://amazing-puzzle.vercel.app** · repo `DaPLG311/amazing-puzzle` · autodeploys on push to main.
+- **PWA**: installable (manifest + icons), offline via `sw.js` — HTML network-first so every
+  deploy's fixes reach devices on next open; assets cache-first; bump `VERSION` per deploy.
+- **IndexedDB media store** (`idb.js`): photos/recordings live in IDB as `idb:` tokens;
+  localStorage stays tiny; hydrated per child at boot/switch; backups re-inline for portability.
+- Splash (1.1 pieces assemble) + empty-category child state (4.1).
+
+## ✅ Milestone 7 — BUILD-OUT: vocabulary depth + the cast alive — SHIPPED
+- **16 worlds, ~252 words, core-words-first**, protected core words, AAC-legible emoji
+  (adversarially reviewed — no duplicate/misleading referents).
+- **Friends** train car: Pollito/Ana/Benji/Coco/Freddy greet in their OWN voices, each
+  hosting their words + a game. Freddy conducts (no drill).
+
+## ✅ Milestone 8 — KID-MAGIC PASS — SHIPPED
+- **Living tiles**: 3D-gloss press physics, pop+glow on speak, the tapped word FLIES into
+  the strip (state updates synchronously — Speak can never drop a word).
+- **Sentence Train**: strip chips are coupled cars; Speak reads word-by-word (karaoke).
+- **World moods** per category; **train moves-on-use, calm at rest** (sensory-safe) with a
+  soft opt-in horn (`settings.sounds`, default off, Calm silences, throttled).
+
+## ✅ Milestone 9 — THE TALK FUNNEL (research-built) + slidable companion — SHIPPED
+Start Talking = **2 taps to a spoken sentence**. Built from a 4-lens research pass —
+full evidence-graded directive set in **`docs/RESEARCH-SENTENCE-FUNNEL.md`** (cite it):
+- **7 fixed starters** incl. the rejection starter **"I don't want…"** (refusal is a right —
+  ASHA Communication Bill of Rights). Starters never re-rank.
+- Child's strip stays **telegraphic, never corrected**; the **voice models complete grammar**
+  ("Let's go **to the** park" / "Let's go home" / "I see Mom" / "I see **a** dog") and reads
+  word-by-word through the train (`state.sentenceModel`).
+- Completing tap speaks the word, then the sentence (`settings.autoSpeak` toggle for
+  child-triggered speak). Step-2 tiles neutral white (Thistle & Wilkinson); board colors
+  frozen per word (`tileBg` hash — Thistle 2018); **"something else →"** escape tile in every
+  grid; **"All my words"** never gated.
+- **Jito is slidable**: drag the companion anywhere — snaps to a side, remembers the spot
+  per child (`settings.buddyPos`); drag never talks, tap still does.
+
+## What's next (Milestone 10+)
+- Real-device touch pass (iPad/Android Safari): speech unlock, drag feel, install flow
 - More game shapes (routine sequencing with Benji, feelings matching with Coco)
 - Bundle the Piper engine locally for true zero-network operation
+- Funnel validation via usage data (funnel→board migration over time; C-directives)
+- 8th "question" starter when usage shows the set is exhausted (research C5)
