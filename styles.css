@@ -104,15 +104,16 @@ body[data-calm="1"] .splash__heart, body[data-calm="1"] .splash__word, body[data
 .strip__btn--del{ background:#EEF2F6; color:var(--muted); }
 .strip__btn:active{ transform:scale(.9); }
 
+/* emergency access is the most important tap in the app — keep it >=44px */
 .need-btn{ position:absolute; top:2px; right:2px; z-index:7; display:flex; align-items:center; gap:6px;
-  background:#FDE2DA; color:#C0392B; font-weight:800; font-size:13px; padding:8px 13px; border-radius:999px;
+  min-height:44px; background:#FDE2DA; color:#C0392B; font-weight:800; font-size:13px; padding:9px 15px; border-radius:999px;
   box-shadow:0 6px 14px rgba(229,72,77,.28); }
 .need-btn .sos{ font-size:11px; background:#fff; border-radius:5px; padding:1px 4px; }
 /* persistent emergency SOS (Home/World/Friends/Stars) — same look as the inline
    board SOS, floated top-right of the phone, above content, below the overlay */
-.sos-fab{ position:absolute; top:12px; right:14px; z-index:8; display:flex; align-items:center; gap:6px;
-  border:0; cursor:pointer; background:#FDE2DA; color:#C0392B; font-weight:800; font-size:13px;
-  padding:8px 13px; border-radius:999px; box-shadow:0 6px 14px rgba(229,72,77,.28); }
+.sos-fab{ position:absolute; top:11px; right:14px; z-index:8; display:flex; align-items:center; gap:6px;
+  min-height:44px; border:0; cursor:pointer; background:#FDE2DA; color:#C0392B; font-weight:800; font-size:13px;
+  padding:9px 15px; border-radius:999px; box-shadow:0 6px 14px rgba(229,72,77,.28); }
 .sos-fab[hidden]{ display:none; }
 .sos-fab .sos{ font-size:11px; background:#fff; border-radius:5px; padding:1px 4px; }
 
