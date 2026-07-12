@@ -21,17 +21,12 @@
 </head>
 <body>
   <div class="phone">
-    <!-- 1.1 Splash: puzzle pieces assemble while the app hydrates (pure CSS,
-         visible before any JS runs; app.js dismisses it when ready) -->
+    <!-- 1.1 Splash: the real brand logo gently fades in while the app hydrates
+         (visible before any JS runs; app.js dismisses it when ready). The logo
+         already carries the wordmark + tagline. -->
     <div class="splash" id="splash" aria-hidden="true">
-      <div class="splash__pieces">
-        <span class="splash__pc" style="--c:#EF4444; --dx:-42px; --dy:-38px">🧩</span>
-        <span class="splash__pc" style="--c:#F97316; --dx:44px;  --dy:-30px">🧩</span>
-        <span class="splash__pc" style="--c:#60A5FA; --dx:-38px; --dy:40px">🧩</span>
-        <span class="splash__pc" style="--c:#FACC15; --dx:40px;  --dy:42px">🧩</span>
-      </div>
-      <div class="splash__name">The Amazing Puzzle</div>
-      <div class="splash__tag">Giving every child a voice</div>
+      <img class="splash__logo" src="logo.png" width="705" height="705"
+           alt="The Amazing Puzzle — Giving Every Child A Voice" />
     </div>
 
     <!-- Screens mount here -->
