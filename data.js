@@ -50,7 +50,7 @@ const TRAIN = [
   { id:"home",    label:"Home",    emoji:"🏠", color:"#FCE9E4" },
   { id:"talk",    label:"Talk",    emoji:"💬", color:"#E7F2FB" },
   { id:"world",   label:"Worlds",  emoji:"🧩", color:"#E6F6EE" },
-  { id:"friends", label:"Friends", emoji:"🐤", color:"#FEF6D6" },
+  { id:"friends", label:"Friends", emoji:"🫂", color:"#FEF6D6" },
   { id:"stars",   label:"Stars",   emoji:"⭐", color:"#FBF3DA" },
 ];
 
@@ -145,7 +145,7 @@ const CATEGORIES = {
     cards:[
       {emoji:"🥤",label:"drink",speak:"drink",core:true}, {emoji:"💧",label:"Water"}, {emoji:"🥛",label:"Milk"},
       {emoji:"🧃",label:"Juice"}, {emoji:"🍫",label:"Hot chocolate",speak:"hot chocolate"}, {emoji:"🫖",label:"Tea"},
-      {emoji:"🥤",label:"Soda"}, {emoji:"🍹",label:"Smoothie"}, {emoji:"🍋",label:"Lemonade"},
+      {emoji:"🧋",label:"Soda"}, {emoji:"🍹",label:"Smoothie"}, {emoji:"🍋",label:"Lemonade"},
     ],
   },
 
@@ -166,11 +166,11 @@ const CATEGORIES = {
     cards:[
       {emoji:"🤕",label:"hurt",speak:"it hurts"}, {emoji:"😋",label:"hungry",speak:"I'm hungry"},
       {emoji:"😛",label:"thirsty",speak:"I'm thirsty"}, {emoji:"🥵",label:"hot"}, {emoji:"🥶",label:"cold"},
-      {emoji:"😴",label:"tired"}, {emoji:"🧠",label:"Head"}, {emoji:"💇",label:"Hair"},
+      {emoji:"😴",label:"tired"}, {emoji:"🙂",label:"Head"}, {emoji:"🦱",label:"Hair"},
       {emoji:"👁️",label:"Eyes"}, {emoji:"👂",label:"Ears"}, {emoji:"👃",label:"Nose"},
       {emoji:"👄",label:"Mouth"}, {emoji:"🦷",label:"Teeth"}, {emoji:"✋",label:"Hand"},
-      {emoji:"💪",label:"Arm"}, {emoji:"🫃",label:"Tummy"}, {emoji:"🦵",label:"Leg"},
-      {emoji:"🦶",label:"Foot"}, {emoji:"😣",label:"Itchy"},
+      {emoji:"💪",label:"Arm"}, {emoji:"🦵",label:"Leg"}, {emoji:"🦶",label:"Foot"},
+      {emoji:"🖐️",label:"Fingers"}, {emoji:"😣",label:"Itchy"},
     ],
   },
 
@@ -257,8 +257,8 @@ const CATEGORIES = {
       {emoji:"➕",label:"more",speak:"more",core:true}, {emoji:"👋",label:"all done",speak:"all done",core:true},
       {emoji:"🐘",label:"big"}, {emoji:"🐭",label:"little"}, {emoji:"🥵",label:"hot"}, {emoji:"🥶",label:"cold"},
       {emoji:"🏎️",label:"fast"}, {emoji:"🐢",label:"slow"}, {emoji:"📢",label:"loud"}, {emoji:"🤫",label:"quiet"},
-      {emoji:"☁️",label:"soft"}, {emoji:"🧱",label:"hard"}, {emoji:"✨",label:"clean"}, {emoji:"🫧",label:"dirty"},
-      {emoji:"💧",label:"wet"}, {emoji:"🌵",label:"dry"}, {emoji:"🆕",label:"new"}, {emoji:"👴",label:"old"},
+      {emoji:"☁️",label:"soft"}, {emoji:"🧱",label:"hard"}, {emoji:"✨",label:"clean"}, {emoji:"🟤",label:"dirty"},
+      {emoji:"💧",label:"wet"}, {emoji:"🌵",label:"dry"}, {emoji:"🆕",label:"new"}, {emoji:"🕰️",label:"old"},
       {emoji:"👍",label:"good"}, {emoji:"👎",label:"bad"},
     ],
   },

@@ -9,6 +9,8 @@
 .buddy__chip{ animation:buddyBreathe 4.5s ease-in-out infinite; }
 @keyframes buddyBreathe{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-4px) } }
 .buddy__chip.wave{ animation:buddyWave 1s ease; }
+/* press feedback wins over idle motion so the tap still feels responsive */
+.buddy__chip:active{ animation:none !important; transform:scale(.9); }
 @keyframes buddyWave{
   0%{ transform:rotate(0) } 15%{ transform:rotate(-14deg) } 30%{ transform:rotate(10deg) }
   45%{ transform:rotate(-8deg) } 60%{ transform:rotate(6deg) } 100%{ transform:rotate(0) } }

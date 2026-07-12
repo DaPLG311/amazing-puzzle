@@ -6,7 +6,7 @@
    if the browser would otherwise evict its HTTP cache.
    Bump VERSION on every deploy to roll the cache forward.
    ============================================================ */
-const VERSION = "ap-v1.1.0";
+const VERSION = "ap-v1.1.1";
 const SHELL = [
   "./", "./index.html",
   "./styles.css", "./onboarding.css", "./grownup.css", "./teach.css",
