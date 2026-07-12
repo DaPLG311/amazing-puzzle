@@ -20,7 +20,15 @@ setInterval(()=>{
   if(GZ.unlocked && document.body.classList.contains("gz") && Date.now()-GZ.lastTouch > GZ_IDLE_MS) gzExit();
 }, 15000);
 document.addEventListener("visibilitychange", ()=>{
-  if(document.hidden && GZ.unlocked) gzRelock();   // tablet sleeps / app switches → locked
+  if(document.hidden && GZ.unlocked){
+    gzRelock();                                          // tablet sleeps / app switches → locked
+    /* and actually LEAVE the editor — a bare relock left the live Vocabulary/
+       Settings screen mounted, so on return a child could edit (even Change PIN)
+       with no PIN prompt. gzExit() unmounts + forces the gate on re-entry.
+       (gzExit stays OUT of gzRelock: go() calls gzRelock on every child nav,
+       which would recurse via gzExit→go.) */
+    if(document.body.classList.contains("gz")) gzExit();
+  }
 });
 
 /* ---------- settings switchboard (body[data-*]) ---------- */
@@ -224,6 +232,7 @@ function vocabCommit(p){
   return ok;
 }
 function gzVocab(){
+  if(!GZ.unlocked) return gzExit();   // never paint a live grown-up screen while locked
   /* THE editor rule (QA blocker fix): the rows you see ARE the overlay array.
      Materialize it from the live board on first view, persist, and re-apply —
      display index and edit index can never drift apart again. */
@@ -287,7 +296,7 @@ function gzVocab(){
     row.className = "vrow"; row.style.cssText = "border:none;box-shadow:none;margin:0;padding:8px 0;";
     row.innerHTML = `
       <span class="vrow__lead" aria-hidden="true">🔒</span>
-      <span class="vrow__face">${n.img?`<img src="${n.img}" alt="">`:(n.emoji||"🆘")}</span>
+      <span class="vrow__face">${mediaURL(n.img)?`<img src="${esc(mediaURL(n.img))}" alt="">`:esc(n.emoji||"🆘")}</span>
       <span class="vrow__body"><span class="vrow__label">${esc(n.label)}</span></span>
       <button class="vrow__edit" aria-label="Edit emergency word ${esc(n.label)}">Edit</button>`;
     row.querySelector(".vrow__edit").onclick = ()=>{ buzz(); vedSheet(n, i, true); };
@@ -409,6 +418,7 @@ const GZ_CYCLES = {
   text:   { order:["standard","large","xlarge"], label:{standard:"Standard", large:"Large", xlarge:"Extra large"} },
 };
 function gzSettings(){
+  if(!GZ.unlocked) return gzExit();   // never paint a live grown-up screen while locked
   const s = settingsGet();
   const CYC_NAMES = { rate:"Speed", mode:"Sentence mode", grid:"Button grid size", text:"Text size" };
   const cyc = (key)=>`<button class="gzcycle" data-cyc="${key}" aria-label="${CYC_NAMES[key]}: ${GZ_CYCLES[key].label[s[key]]} — tap to change">${GZ_CYCLES[key].label[s[key]]}</button>`;
@@ -547,6 +557,7 @@ function gzSettings(){
 
 /* ============ 2.6 USAGE SUMMARY ============ */
 function gzUsage(){
+  if(!GZ.unlocked) return gzExit();   // never paint a live grown-up screen while locked
   /* "from this week" means it: patterns are computed over the last 7 days only */
   const fullLog = usageAll();
   const log = fullLog.filter(e=> e.t > Date.now() - 7*86400000);
@@ -599,6 +610,7 @@ function gzUsage(){
 
 /* ============ 2.7 OFFLINE & BACKUP ============ */
 function gzBackup(){
+  if(!GZ.unlocked) return gzExit();   // never paint a live grown-up screen while locked
   const last = STORE.read("ap.lastBackup", null);
   const profiles = profilesAll();
   let size = 0;
@@ -693,6 +705,7 @@ function gzBackup(){
 
 /* ============ 2.8 PROFILES ============ */
 function gzProfiles(){
+  if(!GZ.unlocked) return gzExit();   // never paint a live grown-up screen while locked
   const all = profilesAll();
   const activeId = (profileGet()||{}).id;
   const wordsOf = p=>{

@@ -41,10 +41,21 @@ function speakTTS(text, voiceKey){
   u.lang = "en-US";
   speechSynthesis.speak(u);
 }
+/* A lone capital letter ("I", or an "A" tile) is announced as "CAPITAL I" by
+   many system TTS voices — jarring and wrong for a child hearing their own
+   sentence. Lowercasing an isolated single letter makes every engine read it
+   as the word/sound ("I"→"eye", "a"→"uh"). Multi-letter text is untouched, so
+   names and real words keep their casing. Applied to the SPOKEN string only;
+   the on-screen chip and the recording-key lookup keep the original text. */
+function saySafe(text){
+  const t = String(text).trim();
+  return /^[A-Za-z]$/.test(t) ? t.toLowerCase() : text;
+}
 function speak(text, voiceKey){
   if(!text) return;
+  const say = saySafe(text);
   const seq = ++SPEAK_SEQ;
-  const fallback = ()=>{ if(seq === SPEAK_SEQ) speakTTS(text, voiceKey); };   // stale rejections stay silent
+  const fallback = ()=>{ if(seq === SPEAK_SEQ) speakTTS(say, voiceKey); };   // stale rejections stay silent
   try{ speechSynthesis && speechSynthesis.cancel(); }catch(e){}
   try{ AUDIO.pause(); AUDIO.currentTime = 0; }catch(e){}
   /* Familiar voice: if the family recorded this word, play THEM (lowercase
@@ -63,8 +74,8 @@ function speak(text, voiceKey){
   /* natural voice (Piper) = the CHILD'S voice upgrade: cached words play
      instantly; uncached speak NOW via webspeech while Piper warms them.
      Cast characters always keep their own webspeech personas. */
-  if(typeof piperSpeak==="function" && piperSpeak(text, fallback, voiceKey)) return;
-  speakTTS(text, voiceKey);
+  if(typeof piperSpeak==="function" && piperSpeak(say, fallback, voiceKey)) return;
+  speakTTS(say, voiceKey);
 }
 function buzz(){
   try{
@@ -280,6 +291,8 @@ function go(screen, cat){
   document.body.classList.remove("teach");
   if(typeof TEACH!=="undefined" && TEACH._timer){ clearTimeout(TEACH._timer); TEACH._timer = null; }
   if(typeof TRAIN_READ_T!=="undefined" && TRAIN_READ_T){ clearTimeout(TRAIN_READ_T); TRAIN_READ_T = null; }
+  /* cancel any pending funnel read/step so it can't fire on the new screen */
+  if(typeof FUNNEL!=="undefined"){ clearTimeout(FUNNEL._speakT); clearTimeout(FUNNEL._stepT); }
   document.querySelectorAll(".flyword").forEach(f=>f.remove());   /* no flying word stranded across screens */
   screenEl.style.background = "";       /* clear any world mood; renderBoard sets its own */
   if(screen!=="grownup"){
@@ -288,6 +301,11 @@ function go(screen, cat){
     if(typeof gzRelock==="function") gzRelock();
   }
   renderTrain();
+  /* Persistent SOS: shown on the child screens that have no inline board header
+     (Home/World/Friends/Stars). talk & category render their own inline SOS;
+     grown-up/onboarding/teach manage their own emergency access. */
+  const sos = document.getElementById("sosFab");
+  if(sos) sos.hidden = !(screen==="home"||screen==="world"||screen==="friends"||screen==="stars");
   const map = { home:renderHome, talk:(typeof renderTalk==="function" ? renderTalk : renderBoard), category:renderBoard, world:renderWorld, stars:renderStars,
     friends:renderFriends,
     grownup:(typeof gzEnter==="function"? gzEnter : renderHome) };
@@ -438,7 +456,11 @@ function renderHome(){
     b.onclick = ()=>{ buzz(); speak(f.speak||f.label); };
     row.appendChild(b);
   });
-  $("#startBtn").onclick = ()=>{ buzz(); go("talk"); };
+  /* "Start Talking" is an explicit FRESH start — always open the starter doors,
+     never resume a leftover finished sentence from a previous visit. */
+  $("#startBtn").onclick = ()=>{ buzz();
+    if(typeof funnelReset==="function"){ funnelReset(); state.sentence = []; state.sentenceModel = null; }
+    go("talk"); };
   $("#grownBtn").onclick = ()=> go("grownup");
   setTimeout(()=>{
     showBuddy("pollito", `Hola, ${CHILD.name}!`);
@@ -587,6 +609,12 @@ function renderStars(){
 /* ---------------- I NEED overlay ---------------- */
 function openNeeds(){
   buzz();
+  /* Emergency is sacred: the instant the panel opens, silence the board so a
+     mid-read sentence (TTS timer AND any playing family recording) can never
+     talk over — or cut off — the urgent word the child is about to tap. */
+  if(typeof TRAIN_READ_T!=="undefined" && TRAIN_READ_T){ clearTimeout(TRAIN_READ_T); TRAIN_READ_T = null; }
+  try{ speechSynthesis && speechSynthesis.cancel(); }catch(e){}
+  try{ AUDIO.pause(); AUDIO.currentTime = 0; }catch(e){}
   const grid = $("#needGrid"); grid.innerHTML="";
   NEEDS.forEach(card=>{
     const t = tileEl(card, card.bg);
@@ -603,6 +631,8 @@ function closeNeeds(){
 }
 $("#needClose").onclick = closeNeeds;
 $("#needOverlay").onclick = (e)=>{ if(e.target.id==="needOverlay") closeNeeds(); };
+/* the persistent SOS is wired once here; go() controls when it's visible */
+(function(){ const f = document.getElementById("sosFab"); if(f) f.onclick = openNeeds; })();
 
 buddyInitDrag();   // the companion is slidable from the very first screen
 

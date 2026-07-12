@@ -52,6 +52,14 @@
       </button>
       <div class="train__cars" id="trainCars"><!-- cars injected --></div>
     </nav>
+
+    <!-- Persistent emergency SOS. Emergency words must be one tap away from EVERY
+         child screen; Home/World/Friends/Stars have no board header, so this
+         chrome-level button guarantees the invariant there. Talk & category
+         boards show their own inline SOS; go() toggles this one accordingly. -->
+    <button class="sos-fab" id="sosFab" hidden aria-label="I Need — emergency words">
+      <span class="sos">SOS</span> I Need
+    </button>
   </div>
 
   <!-- I Need / SOS overlay -->

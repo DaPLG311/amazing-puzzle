@@ -218,8 +218,11 @@ body[data-contrast="1"] .tile .l{ font-weight:900; color:#101820; }
 body[data-contrast="1"] .car{ outline:2px solid #2B3A4A; }
 body[data-contrast="1"] .strip{ border:2px solid #2B3A4A; }
 body[data-contrast="1"] .fav{ border:2px solid #2B3A4A; }
-/* reduce motion: the whole app goes still (train included) */
-body[data-motion="1"] *, body[data-motion="1"] *::before, body[data-motion="1"] *::after{
+/* reduce motion OR calm mode: the whole app goes still (train, tiles, pills,
+   flyword, and the perpetual home avatar float/wave all stop). Calm Mode and
+   Reduce Motion are independent toggles — either one must fully quiet motion. */
+body[data-motion="1"] *, body[data-motion="1"] *::before, body[data-motion="1"] *::after,
+body[data-calm="1"] *,   body[data-calm="1"] *::before,   body[data-calm="1"] *::after{
   animation:none !important; transition:none !important; }
 /* calm mode: companions hush (chip stays reachable, bubble hides) */
 body[data-calm="1"] .buddy__bubble{ display:none; }

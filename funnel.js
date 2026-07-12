@@ -44,13 +44,17 @@ function funnelModelFragment(card){
   if(st.exceptions && st.exceptions[w] !== undefined) return st.exceptions[w];
   if(st.noArticle && st.noArticle.includes(FUNNEL.source)) return w;
   if(/^[A-Z]/.test(w)) return w;                     // names never take an article
-  return st.template.replace("{word}", w);
+  /* "a" → "an" before a vowel sound so the model never says "a elephant" */
+  return st.template.replace("{word}", w).replace(/\ba (?=[aeiou])/i, "an ");
 }
 
 function renderTalk(){ funnelStep(); }
 
 /* ---------- step renderers ---------- */
 function funnelStep(){
+  /* a deferred step (from funnelPick) must never paint the funnel over a screen
+     the child has since navigated away to */
+  if(state.screen !== "talk") return;
   const st = FUNNEL.starter;
   screenEl.style.background = st ? `linear-gradient(180deg, ${st.color} 0%, #ffffff 58%)` : "";
   screenEl.innerHTML = `
@@ -150,6 +154,7 @@ function funnelObjects(box){
    sentence reads word-by-word through the train — always (it IS the
    communication), unless the caregiver chose child-triggered speak (C2). */
 function funnelPick(card, el){
+  if(FUNNEL.done) return;   /* a mashing child can't append runaway words or stack reads */
   buzz();
   el.classList.remove("speaking"); void el.offsetWidth; el.classList.add("speaking");
   state.sentence.push({ emoji:card.emoji, label:funnelWordText(card), img:card.img });
@@ -162,10 +167,12 @@ function funnelPick(card, el){
   try{ usageLog(card.label, "sentence"); }catch(e){}
   const s = (typeof settingsGet==="function") ? settingsGet() : {};
   if(s.speakOnTap!==false) speak(funnelWordText(card));         // B4: the word first…
+  /* tracked timers so navigating away (go()) cancels a pending read/step —
+     never speak or paint the funnel over another screen */
   if(s.autoSpeak!==false){
-    setTimeout(()=> speakSentenceTrain(), s.speakOnTap!==false ? 750 : 150);  // …then the sentence
+    FUNNEL._speakT = setTimeout(()=> speakSentenceTrain(), s.speakOnTap!==false ? 750 : 150);  // …then the sentence
   }
-  setTimeout(funnelStep, reducedMotion() ? 80 : 560);
+  FUNNEL._stepT = setTimeout(funnelStep, reducedMotion() ? 80 : 560);
 }
 
 /* STEP 3 — you said it! */

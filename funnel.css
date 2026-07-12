@@ -45,7 +45,7 @@
 .funnel__crumbhint{ color:var(--muted); font-weight:700; font-size:14px; }
 .funnel__chips{ display:flex; gap:8px; overflow-x:auto; padding:2px; }
 .fchip{ flex:0 0 auto; min-height:44px; padding:10px 16px; border-radius:999px; background:#EDF1F6;
-  color:#6B7A8C; font-weight:800; font-size:14px; }
+  color:#4A5563; font-weight:800; font-size:14px; }   /* #4A5563 on #EDF1F6 ≈ 6:1 (WCAG AA) */
 .fchip.on{ background:#fff; color:var(--ink); box-shadow:0 4px 10px rgba(43,58,74,.12), inset 0 0 0 2px #BFDCFB; }
 .funnel__grid{ padding-top:2px; }
 
@@ -73,6 +73,7 @@
 body[data-contrast="1"] .starter, body[data-contrast="1"] .funnel__said,
 body[data-contrast="1"] .funnel__act, body[data-contrast="1"] .funnel__backpill{
   border:3px solid #2B3A4A; box-shadow:none; }
+body[data-contrast="1"] .fchip{ color:#101820; border:2px solid #2B3A4A; }
 body[data-contrast="1"] .fchip.on{ box-shadow:inset 0 0 0 2px #2B3A4A; }
 
 /* text-size scaling keeps the funnel readable */

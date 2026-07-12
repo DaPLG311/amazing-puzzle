@@ -104,6 +104,9 @@ function startTeach(catId, from){
   TEACH.round = 0; TEACH.remodeled = false;
   if(!teachPick()){ go(TEACH.from); return; }
   document.body.classList.add("teach");
+  /* the game has its own in-game SOS (tmNeed) — hide the persistent one so
+     there's exactly one emergency button on screen (endTeach→go restores it) */
+  const _sos = document.getElementById("sosFab"); if(_sos) _sos.hidden = true;
   teachRound("model");
 }
 function endTeach(){
