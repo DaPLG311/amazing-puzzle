@@ -30,6 +30,7 @@ const DEFAULT_SETTINGS = {
   calm:false,           // Calm Mode: companions hush, celebrations quiet
   games:true,           // word games with the companions (quiet entry points only)
   sounds:false,         // fun sounds (train horn) — opt-in, Calm Mode silences
+  autoSpeak:true,       // finished funnel sentence speaks itself (C2; off = child taps to speak)
 };
 
 function newProfileId(){ return "c" + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }

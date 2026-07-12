@@ -6,13 +6,13 @@
    if the browser would otherwise evict its HTTP cache.
    Bump VERSION on every deploy to roll the cache forward.
    ============================================================ */
-const VERSION = "ap-v1.2.2";
+const VERSION = "ap-v1.3.0";
 const SHELL = [
   "./", "./index.html",
   "./styles.css", "./onboarding.css", "./grownup.css", "./teach.css",
-  "./friends.css", "./kidmagic.css",
+  "./friends.css", "./kidmagic.css", "./funnel.css",
   "./store.js", "./idb.js", "./data.js", "./voices.js", "./sound.js",
-  "./onboarding.js", "./grownup.js", "./teach.js", "./app.js",
+  "./onboarding.js", "./grownup.js", "./teach.js", "./funnel.js", "./app.js",
   "./manifest.json", "./icon-192.png", "./icon-512.png",
 ];
 const RUNTIME_HOSTS = ["cdn.jsdelivr.net", "cdnjs.cloudflare.com"];   // piper engine files

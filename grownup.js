@@ -427,7 +427,9 @@ function gzSettings(){
     <div class="gzsection">💬 Sentence Level</div>
     <div class="gzcard">
       <div class="gzrow"><span class="k">Mode</span>${cyc("mode")}</div>
+      <div class="gzrow"><span class="k">Finished sentence speaks itself</span>${sw("autoSpeak","Finished sentence speaks itself",s.autoSpeak)}</div>
     </div>
+    <div class="gznote">Tip: if your child repeats whole starter phrases as one chunk (gestalt style), more time on the free word board can help — the Talk funnel is always optional.</div>
     <div class="gzsection">🖥️ Display &amp; Access</div>
     <div class="gzcard">
       <div class="gzrow"><span class="k">Button grid size</span>${cyc("grid")}</div>

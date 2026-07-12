@@ -18,6 +18,16 @@ body[data-motion="1"] .buddy__chip,
 body[data-calm="1"] .buddy__chip{ animation:none !important; }
 @media (prefers-reduced-motion:reduce){ .buddy__chip{ animation:none !important; } }
 
+/* ---------- slidable companion: side-aware layout ----------
+   On the LEFT edge the chip hugs the edge and the bubble/pill open rightward;
+   on the RIGHT edge everything mirrors. Drag = grab the chip. */
+.buddy__chip{ cursor:grab; }
+.buddy__chip:active{ cursor:grabbing; }
+.buddy[data-side="left"]{ flex-direction:row-reverse; }
+.buddy[data-side="left"] .buddy__bubble{ border-radius:16px 16px 4px 16px; }
+.buddy[data-side="right"] .buddy__bubble{ border-radius:16px 16px 16px 4px; }
+.buddy[data-side="left"] .buddy__play{ left:0; right:auto; }
+
 /* ---------- the Friends screen ---------- */
 .friends{ display:flex; flex-direction:column; align-items:center; padding:6px 4px 20px; }
 .friends__title{ font-size:26px; font-weight:800; letter-spacing:-.01em; margin:6px 0 14px; }

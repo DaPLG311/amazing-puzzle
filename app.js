@@ -147,6 +147,70 @@ function calmOK(){ return !(typeof settingsGet==="function" && settingsGet().cal
 
 /* ---------------- Buddy (a cast member, by role) ---------------- */
 const buddyEl = $("#buddy"), buddyChip = $("#buddyChip"), buddyBubble = $("#buddyBubble");
+
+/* ---- SLIDABLE COMPANION: drag Jito out of the way ----
+   Direct manipulation: drag the chip anywhere; on release it snaps to the
+   nearest side at that height and REMEMBERS the spot (per child). A simple
+   tap still talks. The kid controls where their friend sits. */
+let BUDDY_SUPPRESS = 0;
+function buddyClampTop(top){
+  const ph = document.querySelector(".phone").getBoundingClientRect();
+  const navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--nav-h")) || 96;
+  const h = buddyEl.getBoundingClientRect().height || 60;
+  return Math.min(Math.max(top, 64), ph.height - navH - h - 10);
+}
+function buddyApplyPos(){
+  const s = (typeof settingsGet==="function") ? settingsGet() : {};
+  const pos = s.buddyPos || null;
+  const side = pos ? pos.side : "left";
+  buddyEl.dataset.side = side;
+  buddyEl.style.left  = side==="left"  ? "16px" : "auto";
+  buddyEl.style.right = side==="right" ? "16px" : "auto";
+  if(pos && pos.yPct != null){
+    const ph = document.querySelector(".phone").getBoundingClientRect();
+    buddyEl.style.bottom = "auto";
+    buddyEl.style.top = buddyClampTop(Math.round(pos.yPct * ph.height)) + "px";
+  } else {
+    buddyEl.style.top = "auto";
+    buddyEl.style.bottom = "calc(var(--nav-h) + 8px)";
+  }
+}
+function buddyInitDrag(){
+  let sx=0, sy=0, ox=0, oy=0, moved=false, pid=null;
+  buddyChip.style.touchAction = "none";
+  buddyChip.addEventListener("pointerdown", e=>{
+    pid = e.pointerId; moved = false;
+    const r = buddyEl.getBoundingClientRect();
+    const ph = document.querySelector(".phone").getBoundingClientRect();
+    sx = e.clientX; sy = e.clientY; ox = r.left - ph.left; oy = r.top - ph.top;
+    try{ buddyChip.setPointerCapture(pid); }catch(err){}
+  });
+  buddyChip.addEventListener("pointermove", e=>{
+    if(pid===null || e.pointerId!==pid) return;
+    const dx = e.clientX - sx, dy = e.clientY - sy;
+    if(!moved && Math.hypot(dx,dy) < 10) return;   // still a tap until it isn't
+    moved = true;
+    buddyEl.style.right = "auto"; buddyEl.style.bottom = "auto";
+    buddyEl.style.left = (ox + dx) + "px";
+    buddyEl.style.top  = buddyClampTop(oy + dy) + "px";
+  });
+  const finish = e=>{
+    if(pid===null || (e.pointerId!==undefined && e.pointerId!==pid)) return;
+    pid = null;
+    if(!moved) return;                              // plain tap → chip's onclick speaks
+    BUDDY_SUPPRESS = Date.now();                    // a drag never triggers speech
+    const ph = document.querySelector(".phone").getBoundingClientRect();
+    const r = buddyEl.getBoundingClientRect();
+    const side = (r.left + r.width/2 - ph.left) < ph.width/2 ? "left" : "right";
+    const yPct = (r.top - ph.top) / ph.height;
+    try{ settingsSet({ buddyPos: { side, yPct } }); }catch(err){}
+    buddyApplyPos();
+    buzz();
+  };
+  buddyChip.addEventListener("pointerup", finish);
+  buddyChip.addEventListener("pointercancel", finish);
+}
+
 function showBuddy(castKey, line, voice){
   const c = CAST[castKey]; if(!c){ buddyEl.hidden = true; return; }
   buddyEl.hidden = false;
@@ -157,7 +221,10 @@ function showBuddy(castKey, line, voice){
      (idle breathing lives in CSS; reduced-motion/calm still it) */
   buddyChip.classList.remove("wave"); void buddyChip.offsetWidth; buddyChip.classList.add("wave");
   buddyBubble.textContent = line || "";
-  buddyChip.onclick = ()=>{ buzz(); const l = line || "Hola!"; buddyBubble.textContent = l;
+  buddyApplyPos();                                  // sit where the child slid him
+  buddyChip.onclick = ()=>{
+    if(Date.now() - BUDDY_SUPPRESS < 450) return;   // a slide is not a tap
+    buzz(); const l = line || "Hola!"; buddyBubble.textContent = l;
     speak(l.replace(/[—-].*$/,""), voice || (VOICES[castKey] ? castKey : "sunny")); };   // each friend speaks in their OWN voice
   /* quiet, ignorable Play pill on talking screens (never interrupts) */
   const old = buddyEl.querySelector(".buddy__play"); if(old) old.remove();
@@ -221,10 +288,18 @@ function go(screen, cat){
     if(typeof gzRelock==="function") gzRelock();
   }
   renderTrain();
-  const map = { home:renderHome, talk:renderBoard, category:renderBoard, world:renderWorld, stars:renderStars,
+  const map = { home:renderHome, talk:(typeof renderTalk==="function" ? renderTalk : renderBoard), category:renderBoard, world:renderWorld, stars:renderStars,
     friends:renderFriends,
     grownup:(typeof gzEnter==="function"? gzEnter : renderHome) };
   (map[screen]||renderHome)();
+}
+
+/* B2 (Thistle 2018): a word keeps its color everywhere, forever — color
+   derives from the label itself, so caregiver edits never reshuffle hues */
+function tileBg(card){
+  const s = String(card.label||""); let h = 0;
+  for(let i=0;i<s.length;i++){ h = (h*31 + s.charCodeAt(i)) >>> 0; }
+  return PASTEL[h % PASTEL.length];
 }
 
 /* ---------------- Shared: a speaking, teachable tile ---------------- */
@@ -289,7 +364,7 @@ function stripHTML(){
 function wireStrip(){
   renderStrip();
   $("#sSpeak").onclick = ()=>{ if(!state.sentence.length) return; buzz(); speakSentenceTrain(); };
-  $("#sDel").onclick = ()=>{ buzz(); state.sentence.pop(); renderStrip(); };
+  $("#sDel").onclick = ()=>{ buzz(); state.sentence.pop(); state.sentenceModel = null; renderStrip(); };
 }
 /* the Sentence Train reads left→right: each car lights up as it's spoken
    (karaoke). Engine-agnostic — timed per word so it works with Web Speech,
@@ -297,7 +372,10 @@ function wireStrip(){
 let TRAIN_READ_T = null;
 function speakSentenceTrain(){
   clearTimeout(TRAIN_READ_T);
-  const words = state.sentence.map(c=>c.speak||c.label);
+  /* B3: chips stay telegraphic; the VOICE models complete grammar when the
+     funnel provided one ("park" chip is spoken as "to the park") */
+  const words = state.sentence.map((c,i)=>
+    (state.sentenceModel && state.sentenceModel[i]) ? state.sentenceModel[i] : (c.speak||c.label));
   let i = 0;
   const step = ()=>{
     const pills = [...document.querySelectorAll("#stripCards .pill")];
@@ -333,7 +411,7 @@ function addToSentence(card, fromEl){
   }
   /* state updates NOW — Speak always reflects what the child built; the fly is
      decorative only (the chip is already there when the clone lands on it) */
-  state.sentence.push(card); renderStrip();
+  state.sentence.push(card); state.sentenceModel = null; renderStrip();
   if(state.sentence.length===1) buddyBubble.textContent = "One more word!";
   else if(state.sentence.length>=2) buddyBubble.textContent = "Press 🔊 to say it!";
   flyWord(card, fromEl);
@@ -398,7 +476,7 @@ function renderBoard(){
       <p>A grown-up can add words for you in the Grown-Up Zone.</p>
     </div>`;
   } else {
-    cat.cards.forEach((card,i)=> grid.appendChild(tileEl(card, PASTEL[i % PASTEL.length])));
+    cat.cards.forEach((card)=> grid.appendChild(tileEl(card, tileBg(card))));
   }
   /* natural voice: quietly pre-warm the words the child can see right now */
   if(typeof piperPrewarm==="function") piperPrewarm(cat.cards.map(c=>c.speak||c.label));
@@ -525,6 +603,8 @@ function closeNeeds(){
 }
 $("#needClose").onclick = closeNeeds;
 $("#needOverlay").onclick = (e)=>{ if(e.target.id==="needOverlay") closeNeeds(); };
+
+buddyInitDrag();   // the companion is slidable from the very first screen
 
 /* ---------------- boot ----------------
    The splash (pure CSS, already animating) covers hydration:

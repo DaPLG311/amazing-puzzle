@@ -278,3 +278,37 @@ const NEEDS = [
 ];
 
 const CHILD = { name:"Jacob", avatar:"🧒" };
+
+/* ---- SENTENCE STARTERS (the Talk funnel: 2 taps → a sentence) ----
+   Each starter fuses subject+action; its sources are the ONLY word sets
+   shown next, so the choice space stays small and obvious. Telegraphic
+   joins are correct AAC ("Let's go park") — never grammar-corrected. */
+const STARTERS = [
+  { id:"want", label:"I want",   emoji:"🙌", color:"#FCE9E4",
+    chips:[{emoji:"🙋",label:"I"},{emoji:"🙌",label:"want"}],
+    sources:["favorites","food","drinks","play"] },
+  { id:"feel", label:"I feel",   emoji:"💙", color:"#F3ECFF",
+    chips:[{emoji:"🙋",label:"I"},{emoji:"💙",label:"feel"}],
+    sources:["feelings"] },
+  { id:"see",  label:"I see",    emoji:"👀", color:"#E6F6EE",
+    chips:[{emoji:"🙋",label:"I"},{emoji:"👀",label:"see"}],
+    template:"a {word}", noArticle:["colors"],   /* "I see a dog" / "I see red" / "I see Mom" */
+    sources:["animals","people","colors"] },
+  { id:"go",   label:"Let's go", emoji:"🚗", color:"#E7F2FB",
+    chips:[{emoji:"🚗",label:"Let's go"}],
+    template:"to the {word}", exceptions:{ "home":"home", "outside":"outside", "school":"to school" },
+    sources:["places"] },
+  { id:"dontwant", label:"I don't want", emoji:"🙅", color:"#FDE7E7",
+    chips:[{emoji:"🙋",label:"I"},{emoji:"🙅",label:"don't want"}],
+    sources:["favorites","food","drinks","play","places"] },
+  { id:"need", label:"I need",   emoji:"🆘", color:"#FDECEC",
+    chips:[{emoji:"🙋",label:"I"},{emoji:"🆘",label:"need"}],
+    items:[
+      {emoji:"🤲",label:"help"},{emoji:"⏸️",label:"a break"},{emoji:"🚻",label:"the bathroom"},
+      {emoji:"🤗",label:"a hug"},{emoji:"💧",label:"water"},{emoji:"🍽️",label:"food"},
+      {emoji:"🤫",label:"quiet"},{emoji:"👩",label:"Mom"},{emoji:"👨",label:"Dad"},
+    ] },
+  { id:"like", label:"I like",   emoji:"❤️", color:"#FBF3DA",
+    chips:[{emoji:"🙋",label:"I"},{emoji:"❤️",label:"like"}],
+    sources:["favorites","animals","play","colors"] },
+];
